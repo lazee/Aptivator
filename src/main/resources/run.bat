@@ -1,0 +1,3 @@
+@echo off
+set CLASS_PATH=lib\aptivator-0.1-SNAPSHOT.jar;bcmail-jdk14-138.jar;lib\bcprov-jdk14-138.jar;lib\commons-codec-1.2.jar;lib\commons-httpclient-3.1.jar;lib\commons-lang-2.4.jar;lib\commons-logging-1.0.4.jar;lib\core-renderer-8.0.0.jar;lib\doxia-core-1.1.2.jar;lib\doxia-logging-api-1.1.2.jar;lib\doxia-module-apt-1.1.2.jar;lib\doxia-module-xhtml-1.1.2.jar;lib\doxia-sink-api-1.1.2.jar;lib\forms-1.2.1.jar;lib\icu4j-4.0.1.jar;lib\itext-2.0.8.jar;lib\junit-3.8.1.jar;lib\looks-2.2.2.jar;lib\plexus-classworlds-1.2-alpha-9.jar;lib\plexus-container-default-1.0-alpha-30.jar;lib\plexus-utils-2.0.2.jar;lib\xercesImpl-2.8.1.jar;lib\xml-apis-1.3.03.jar
+java -cp %CLASS_PATH% net.jakobnielsen.aptivator.cli.AptivatorCli %1

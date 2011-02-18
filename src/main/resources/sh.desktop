@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Name=Aptivator
+Type=Application
+Terminal=false
+Icon[en_US]=gnome-eyes-applet
+Name[en_US]=Aptivator
+Exec=run.sh %f
+Comment[en_US]=Apt viewer
+Comment=Apt viewer
+Icon=gnome-eyes-applet

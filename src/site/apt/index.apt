@@ -1,0 +1,25 @@
+ mvn install:install-file -DgroupId=net.java.dev.xhtmlrenderer -DartifactId=core-renderer -Dversion=8.0-PRE2 -Dpackaging=jar -Dfile=core-renderer.jar -DrepositoryId=api-repository -DgeneratePom=true
+
+ mvn deploy-deploy-file -DgroupId=net.java.dev.xhtmlrenderer -DartifactId=core-renderer -Dversion=8.0-PRE2 -Dpackaging=jar -Dfile=core-renderer.jar -DrepositoryId=api-repository -DgeneratePom=true -Durl=scp://gro.api.no/home/maven/public_html/repository
+
+TODO:
+
+ * Add refresh timer (do refresh)
+
+ * Add statusbar showing timer info
+
+ * Test on a lot of apt-files
+
+ * Test on linux and windows
+
+ * Deal with renderer clicks
+
+ * Add recent files (Last 10)
+
+ * Rewrite Aptivator to use action classes instead of defining actions directly inline
+
+ * Implement simple editor
+
+ * Reintroduce toolbar
+
+ * Fix bug in viewer that cause pagedown/arrows not to work before editor is activated

@@ -1,0 +1,107 @@
+<project name="aptivator-mac-builder" default="help" basedir=".">
+
+    <property environment="env"/>
+    <property file="build.properties"/>
+
+    <condition property="ant.version.okay">
+        <contains string="${ant.version}" substring="1.8."/>
+    </condition>
+    <fail message="This build must be executed using ant version 1.8.x. You are using ${ant.version}. Download: http://ant.apache.org/bindownload.cgi"
+          unless="ant.version.okay"/>
+
+    <target name="help">
+        <echo>
+            This is the ant script that we use to create a new Mac OSX bundle of Aptivator upon release.
+
+            What you need to do is to place the newly released aptivator zip bundle into the resource directory
+            as aptivator.zip.
+
+            Then update the version property in build.properties
+
+            Finally run ant release
+
+            You will then end up with a dmg bundle ready for installation on OSX 1.5+
+        </echo>
+    </target>
+
+    <target name="init">
+
+        <mkdir dir="${tmp.dir}"/>
+        <mkdir dir="${dist.dir}"/>
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${tmp.unzip.dir}"/>
+
+
+    </target>
+
+    <target name="compile" depends="init">
+        <javac srcdir="${src.dir}" destdir="${build.dir}" debug="on" deprecation="on" target="1.5">
+            <classpath>
+                <fileset dir="${lib.dir}">
+                    <include name="*.jar"/>
+                </fileset>
+            </classpath>
+            <include name="*/**"/>
+        </javac>
+    </target>
+
+    <target name="release" depends="init, compile" description="Release Aptivator Mac Bundle">
+        <condition property="isResourceFile">
+            <resourceexists>
+                <file file="${resource.dir}/aptivator.zip"/>
+            </resourceexists>
+        </condition>
+        <fail message="You must put the latest aptivator.zip release into the resource directory before proceeding"
+              unless="isResourceFile"/>
+        <unzip src="${resource.dir}/aptivator.zip" dest="${tmp.unzip.dir}"/>
+        <copy todir="${app.dir}/Resources/Java" flatten="true">
+            <fileset dir="${tmp.unzip.dir}/lib">
+                <include name="**/**"/>
+            </fileset>
+            <mapper type="flatten"/>
+        </copy>
+
+        <taskdef name="dts" classname="net.jakobnielsen.ant.DirToStringTask" classpath="${build.dir}">
+        </taskdef>
+
+        <dts dir="${app.dir}/Resources/Java" propertyName="jars" indents="24"/>
+
+
+        <filter token="VERSION" value="${version}"/>
+        <filter token="JARS" value="${jars}"/>
+        <copy tofile="${app.dir}/Info.plist" filtering="true">
+            <fileset file="${resource.dir}/Info.plist"/>
+        </copy>
+
+        <property name="disk.image.filename" value="aptivator${version}install.dmg" />
+
+        <exec executable="hdiutil" failonerror="true">
+            <arg value="create"/>
+            <arg value="-quiet"/>
+            <arg value="-volname"/>
+            <arg value="Aptivator ${version}"/>
+            <arg value="-srcfolder"/>
+            <arg file="${aptivator.dir}"/>
+            <arg file="${dist.dir}/${disk.image.filename}"/>
+        </exec>
+        <exec executable="hdiutil"
+              failonerror="true">
+            <arg value="internet-enable"/>
+            <arg value="-quiet"/>
+            <arg file="${dist.dir}/${disk.image.filename}"/>
+        </exec>
+
+    </target>
+
+    <target name="clean" description="Remove temporary files" depends="init">
+        <delete dir="${tmp.dir}" includeemptydirs="true" failonerror="false"/>
+        <delete dir="${build.dir}" includeemptydirs="true" failonerror="false"/>
+        <delete dir="${dist.dir}" includeemptydirs="true" failonerror="false"/>
+        <delete includeemptydirs="true" failonerror="false">
+            <fileset dir="${app.dir}/Resources/Java" includes="**/*"/>
+        </delete>
+        <delete file="${app.dir}/Info.plist" failonerror="false"/>
+    </target>
+
+
+</project>
