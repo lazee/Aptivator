@@ -113,7 +113,6 @@ public class SettingsDialog extends JDialog {
         tabbedPane.putClientProperty("jgoodies.noContentBorder", Boolean.TRUE);
         tabbedPane.add("General", buildGeneralPanel());
         tabbedPane.add("StyleSheets", buildStyleSheetPanel());
-        //tabbedPane.add("Export to PDF", buildExportPanel());
         return tabbedPane;
     }
 
@@ -234,24 +233,6 @@ public class SettingsDialog extends JDialog {
         builder.add(buttonPanel, cc.xy(3, 3, CellConstraints.DEFAULT, CellConstraints.FILL));
 
         return builder.getPanel();
-    }
-
-    private JComponent buildExportPanel() {
-        FormLayout layout = new FormLayout(
-                "pref, 4dlu, pref", // columns
-                "pref, 2dlu, pref, 2dlu, pref"); // rows
-
-        layout.setRowGroups(new int[][]{{1, 3, 5}});
-
-        JPanel panel = new JPanel(layout);
-        panel.setBorder(Borders.DIALOG_BORDER);
-
-        CellConstraints cc = new CellConstraints();
-        panel.add(new JLabel("Refresh interval (-1 if no refresh)"), cc.xy(1, 1));
-
-        panel.add(f1, cc.xy(3, 1));
-
-        return panel;
     }
 
     class StyleSheetRenderer extends JLabel implements ListCellRenderer {

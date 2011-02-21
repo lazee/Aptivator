@@ -54,9 +54,9 @@ public class Stylesheets {
             output = new BufferedWriter(new FileWriter(f));
             StringBuffer sb = new StringBuffer();
             for (StyleSheet s : getStylesheets()) {
-                sb.append(s.getId() + "\n");
-                sb.append(s.getTitle() + "\n");
-                sb.append(s.getSrcFile().getAbsolutePath() + "\n");
+                sb.append(s.getId()).append("\n");
+                sb.append(s.getTitle()).append("\n");
+                sb.append(s.getSrcFile().getAbsolutePath()).append("\n");
             }
             output.write(sb.toString());
             return true;
@@ -64,8 +64,11 @@ public class Stylesheets {
             return false;
         } finally {
             try {
-                output.close();
+                if (output != null) {
+                    output.close();
+                }
             } catch (IOException e) {
+                // Ignoring for now
             }
         }
     }

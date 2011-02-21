@@ -20,26 +20,20 @@ package net.jakobnielsen.aptivator.renderer;
  * }}}
  */
 
-import java.awt.Component;
-import java.awt.Dimension;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
-import javax.swing.AbstractAction;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JScrollBar;
-import javax.swing.JScrollPane;
-import javax.swing.KeyStroke;
 
 /**
  * <p><code>FSScrollPane</code> is a JScrollPane set up to support keyboard navigation of an XHTML/XML
- * document rendered with Flying Saucer. In particular, it assigns key bindings to the view's {@link InputMap}
+ * document rendered with Flying Saucer. In particular, it assigns key bindings to the view's {@link javax.swing.InputMap}
  * for page-up, page-down, line-up/down, page-start and page-end.
  * The amount the document scrolls is based on the current viewport and the current line height.
  * If the view is resized, the scroll increment is automatically adjusted. Using FSScrollPane
- * to display an {@link XHTMLPanel} should save you time as your users
+ * to display an {@link org.xhtmlrenderer.simple.XHTMLPanel} should save you time as your users
  * will have standard keyboard navigation out of the box.</p>
  *
  * <p>To use <code>FSScrollPane</code>, just instantiate it and add your XHTMLPanel on instantiation:
@@ -88,12 +82,6 @@ public class AptivatorScrollPane extends JScrollPane {
 
     /** Constant used for mapping a key binding to "scroll to top of document" */
     public static final String PAGE_START = "page-start";
-
-
-    public AptivatorScrollPane() {
-        this(null);
-    }
-
 
     /* Instantiates a new FSScrollPane around the given Panel; see class documentation. */
     public AptivatorScrollPane(JPanel aview) {

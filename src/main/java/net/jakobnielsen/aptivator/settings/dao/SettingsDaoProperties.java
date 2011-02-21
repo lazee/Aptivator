@@ -58,12 +58,16 @@ public class SettingsDaoProperties implements SettingsDao {
         settingsDir = new File(System.getProperty("user.home") + File.separator + propertiesDirName);
         if (settingsDir.isFile()) {
             log.debug("Deleting " + settingsDir.getAbsolutePath() + ".");
-            settingsDir.delete();
+            if (!settingsDir.delete()) {
+                log.warn("Could not delete : " + settingsDir.getAbsolutePath());
+            }
         }
 
         if (!settingsDir.exists()) {
             log.debug("Creating properties directory: " + settingsDir.getAbsolutePath());
-            settingsDir.mkdir();
+            if (!settingsDir.mkdir()) {
+                log.error("Could not create : " + settingsDir.getAbsolutePath());
+            }
         }
     }
 
@@ -111,15 +115,6 @@ public class SettingsDaoProperties implements SettingsDao {
             settings.getRecentFiles().setRecentFiles(splitList(properties.getProperty(RECENT_FILES)));
         }
         return settings;
-    }
-
-    protected List<File> splitFileList(String str) {
-        List<String> strings = splitList(str);
-        List<File> files = new ArrayList<File>();
-        for (String s : strings) {
-            files.add(new File(s));
-        }
-        return files;
     }
 
     protected List<String> splitList(String str) {

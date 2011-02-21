@@ -13,7 +13,7 @@ public class StyleSheet {
 
     public StyleSheet() {
         Date d = new Date();
-        this.id = "" + d.getTime();        
+        this.id = "" + d.getTime();
     }
 
     public String getId() {
@@ -44,18 +44,11 @@ public class StyleSheet {
     public boolean equals(Object o) {
         if (this == o) {
             return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
+        } else if (o == null || getClass() != o.getClass()) {
             return false;
         }
-
         StyleSheet that = (StyleSheet) o;
-
-        if (!id.equals(that.id)) {
-            return false;
-        }
-
-        return true;
+        return id.equals(that.id);
     }
 
     @Override

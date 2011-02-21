@@ -10,7 +10,4 @@ public class AptivatorException extends Exception {
         super(message, cause);
     }
 
-    public AptivatorException(Throwable cause) {
-        super(cause);
-    }
 }

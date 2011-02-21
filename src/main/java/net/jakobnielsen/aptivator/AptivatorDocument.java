@@ -92,10 +92,6 @@ public class AptivatorDocument {
         this.file = file;
     }
 
-    public File getFile() {
-        return file;
-    }
-
     public void setStylesheets(Stylesheets stylesheets) {
         stylesheetsModel.removeAllElements();
         stylesheetsModel.addElement(defaultStylesheet);
@@ -339,10 +335,12 @@ public class AptivatorDocument {
                         output = new BufferedWriter(new FileWriter(outputFile));
                         output.write(out);
                     } catch (IOException e) {
+                        // Ignoring for now
                     } finally {
                         try {
                             output.close();
                         } catch (IOException e) {
+                            // Ignoring for now
                         }
                     }
                     DesktopUtil.openFile(outputFile);

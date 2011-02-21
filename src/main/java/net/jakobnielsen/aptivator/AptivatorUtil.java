@@ -36,10 +36,6 @@ public class AptivatorUtil {
         return AptivatorUtil.class.getResource(imgLocation);
     }
 
-    public static Icon createIcon(String name) {
-        return new ImageIcon(AptivatorUtil.createImageUrl(name), "");
-    }
-
     public static Icon createIcon(String name, String description) {
         return new ImageIcon(AptivatorUtil.createImageUrl(name), description);
     }

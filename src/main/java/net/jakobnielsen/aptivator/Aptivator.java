@@ -26,7 +26,6 @@ import net.jakobnielsen.aptivator.settings.SettingsDialog;
 import net.jakobnielsen.aptivator.settings.dao.SettingsDao;
 import net.jakobnielsen.aptivator.settings.dao.SettingsDaoProperties;
 import net.jakobnielsen.aptivator.settings.entities.Settings;
-import org.apache.log4j.Logger;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.PlexusContainerException;
 
@@ -71,8 +70,6 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
     private boolean firstDocument = true;
 
     private File activeExportDir = new File("");
-
-    private Logger log = Logger.getLogger(Aptivator.class);
 
     /** Plexus container */
     private PlexusContainer plexus;

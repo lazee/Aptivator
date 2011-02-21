@@ -21,8 +21,6 @@ import java.io.File;
 
 public class StylesheetDialog extends JDialog {
 
-    private JPanel mainPanel;
-
     private JTextField titleField = new JTextField();
 
     private JTextField pathField = new JTextField();
@@ -42,7 +40,7 @@ public class StylesheetDialog extends JDialog {
 
         this.styleSheet = styleSheet;
 
-        mainPanel = buildMainPanel();
+        JPanel mainPanel = buildMainPanel();
 
         selectButton.addActionListener(
                 new ActionListener() {
