@@ -17,7 +17,6 @@ package net.jakobnielsen.aptivator.settings.dao;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
-import net.jakobnielsen.aptivator.doxia.book.BookReader;
 import net.jakobnielsen.aptivator.settings.entities.Settings;
 import org.apache.log4j.Logger;
 import org.codehaus.plexus.PlexusContainer;
@@ -54,8 +53,6 @@ public class SettingsDaoProperties implements SettingsDao {
     private static final String APP_SIZE_HEIGHT = "app.size.height";
 
     private static final String RECENT_FILES = "recent.files";
-
-    private static final String BOOKS = "book.files.";
 
     private File settingsDir;
 
@@ -106,7 +103,6 @@ public class SettingsDaoProperties implements SettingsDao {
         properties.setProperty(APP_SIZE_WIDTH, "" + settings.getAppSize().width);
         properties.setProperty(APP_SIZE_HEIGHT, "" + settings.getAppSize().height);
         properties.setProperty(RECENT_FILES, createListStr(settings.getRecentFiles().getRecentFiles()));
-        properties.setProperty(BOOKS, createListStr(settings.getBooks().getDescriptorFiles()));
         return properties;
     }
 
@@ -124,9 +120,6 @@ public class SettingsDaoProperties implements SettingsDao {
         }
         if (properties.containsKey(RECENT_FILES)) {
             settings.getRecentFiles().setRecentFiles(splitList(properties.getProperty(RECENT_FILES)));
-        }
-        if (properties.containsKey(BOOKS)) {
-            settings.setBooks(BookReader.loadBooks(plexus, splitFileList(properties.getProperty(BOOKS))));
         }
         return settings;
     }

@@ -15,9 +15,6 @@
  */
 package net.jakobnielsen.aptivator.settings.entities;
 
-import net.jakobnielsen.aptivator.bookmark.entities.Bookmarks;
-import net.jakobnielsen.aptivator.doxia.book.Books;
-
 import java.awt.Dimension;
 import java.io.File;
 
@@ -33,11 +30,7 @@ public class Settings {
 
     private final RecentFiles recentFiles = new RecentFiles(10);
 
-    private Bookmarks bookmarks = new Bookmarks();
-
     private Stylesheets stylesheets = new Stylesheets();
-
-    private Books books = new Books();
 
     public Dimension getAppSize() {
         return appSize;
@@ -67,14 +60,6 @@ public class Settings {
         recentFiles.clear();
     }
     
-    public Bookmarks getBookmarks() {
-        return bookmarks;
-    }
-
-    public void setBookmarks(Bookmarks bookmarks) {
-        this.bookmarks = bookmarks;
-    }
-
     public void setStylesheets(Stylesheets stylesheets) {
         this.stylesheets = stylesheets;
     }
@@ -83,11 +68,4 @@ public class Settings {
         return stylesheets;
     }
 
-    public Books getBooks() {
-        return books;
-    }
-
-    public void setBooks(Books books) {
-        this.books = books;
-    }
 }
