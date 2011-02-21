@@ -31,32 +31,27 @@ import org.codehaus.plexus.util.StringUtils;
 public class UnsupportedFormatException extends AptivatorException {
 
     /**
-     * Constructs an UnsupportedFormatException with the specified
-     * detail message.
+     * Constructs an UnsupportedFormatException with the specified detail message.
      *
-     * @param format the unsupported format, not null
+     * @param format          the unsupported format, not null
      * @param supportedFormat the supported formats, not null
      */
-    public UnsupportedFormatException( String format, String[] supportedFormat )
-    {
-        super( "Unsupported format '" + format + "'. The allowed format are: "
-            + StringUtils.join( supportedFormat, ", " ) );
+    public UnsupportedFormatException(String format, String[] supportedFormat) {
+        super("Unsupported format '" + format + "'. The allowed format are: "
+                + StringUtils.join(supportedFormat, ", "));
     }
 
     /**
-     * Construct a new UnsupportedFormatException with the specified
-     * detail message and cause.
+     * Construct a new UnsupportedFormatException with the specified detail message and cause.
      *
-     * @param format the unsupported format, not null
-     * @param supportedFormat the supported formats, not null
-     * This can later be retrieved by the Throwable.getMessage() method.
-     * @param cause the cause. This can be retrieved later by the
-     * Throwable.getCause() method. (A null value is permitted, and indicates
-     * that the cause is nonexistent or unknown.)
+     * @param format          the unsupported format, not null
+     * @param supportedFormat the supported formats, not null This can later be retrieved by the Throwable.getMessage()
+     *                        method.
+     * @param cause           the cause. This can be retrieved later by the Throwable.getCause() method. (A null value
+     *                        is permitted, and indicates that the cause is nonexistent or unknown.)
      */
-    public UnsupportedFormatException( String format, String[] supportedFormat, Throwable cause )
-    {
-        super( "Unsupported format '" + format + "'. The allowed format are: "
-            + StringUtils.join( supportedFormat, ", " ), cause );
+    public UnsupportedFormatException(String format, String[] supportedFormat, Throwable cause) {
+        super("Unsupported format '" + format + "'. The allowed format are: "
+                + StringUtils.join(supportedFormat, ", "), cause);
     }
 }

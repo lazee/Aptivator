@@ -349,12 +349,12 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
 
     /** Settings ** */
     private void loadSettings() {
-        SettingsDao dao = new SettingsDaoProperties(plexus);
+        SettingsDao dao = new SettingsDaoProperties();
         settings = dao.getSettings();
     }
 
     private void storeSettings() {
-        SettingsDao dao = new SettingsDaoProperties(plexus);
+        SettingsDao dao = new SettingsDaoProperties();
         dao.setSettings(settings);
     }
 

@@ -18,44 +18,34 @@
  */
 package net.jakobnielsen.aptivator.doxia;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
+import com.ibm.icu.text.CharsetDetector;
+import com.ibm.icu.text.CharsetMatch;
+import net.jakobnielsen.aptivator.doxia.wrapper.InputFileWrapper;
 import net.jakobnielsen.aptivator.doxia.wrapper.Wrapper;
-import org.codehaus.plexus.util.xml.XmlUtil;
-
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
 import org.apache.maven.doxia.logging.Log;
 import org.apache.maven.doxia.logging.SystemStreamLog;
 import org.apache.maven.doxia.parser.ParseException;
 import org.apache.maven.doxia.parser.Parser;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.sink.SinkFactory;
-import org.codehaus.plexus.ContainerConfiguration;
-import org.codehaus.plexus.DefaultContainerConfiguration;
-import org.codehaus.plexus.DefaultPlexusContainer;
 import org.codehaus.plexus.PlexusContainer;
-import org.codehaus.plexus.PlexusContainerException;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.xml.XmlStreamReader;
-import com.ibm.icu.text.CharsetDetector;
-import com.ibm.icu.text.CharsetMatch;
+import org.codehaus.plexus.util.xml.XmlUtil;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
-
-import net.jakobnielsen.aptivator.doxia.wrapper.InputFileWrapper;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Default implementation of <code>Converter</code>
@@ -107,20 +97,6 @@ public class DefaultConverter {
 
         return log;
     }
-
-//    /**
-//     * {@inheritDoc}
-//     */
-//    public String[] getInputFormats() {
-//        return SUPPORTED_FROM_FORMAT;
-//    }
-
-//    /**
-//     * {@inheritDoc}
-//     */
-//    public String[] getOutputFormats() {
-//        return SUPPORTED_TO_FORMAT;
-//    }
 
     /**
      * {@inheritDoc}
@@ -224,13 +200,6 @@ public class DefaultConverter {
         }
     }
 
-//    /**
-//     * {@inheritDoc}
-//     */
-//    public void setFormatOutput(boolean formatOutput) {
-//        boolean formatOutput1 = formatOutput;
-//    }
-
     /**
      * @param parser not null
      * @param inputFormat not null
@@ -294,94 +263,5 @@ public class DefaultConverter {
         throw new UnsupportedOperationException(msg.toString());
     }
 
-//    /**
-//     * Auto detect Doxia format for the given file depending: <ul> <li>the file name for TextMarkup based Doxia
-//     * files</li> <li>the file content for XMLMarkup based Doxia files</li> </ul>
-//     *
-//     * @param f        not null file
-//     * @param encoding a not null encoding.
-//     * @return the detected encoding from f.
-//     * @throws IllegalArgumentException if f is not a file.
-//     * @throws UnsupportedOperationException if could not detect the Doxia format.
-//     */
-//    private static String autoDetectFormat(File f, String encoding) {
-//        if (!f.isFile()) {
-//            throw new IllegalArgumentException(
-//                    "The file '" + f.getAbsolutePath() + "' is not a file, could not detect format.");
-//        }
-//
-//        for (int i = 0; i < SUPPORTED_FROM_FORMAT.length; i++) {
-//            String supportedFromFormat = SUPPORTED_FROM_FORMAT[i];
-//
-//            // Handle Doxia text files
-//            if (supportedFromFormat.equalsIgnoreCase(APT_PARSER) && isDoxiaFileName(f, supportedFromFormat)) {
-//                return supportedFromFormat;
-//            }
-//
-//            // Handle Doxia xml files
-//            String firstTag = getFirstTag(f);
-//            if (firstTag == null) {
-//                continue;
-//            }
-//        }
-//
-//        StringBuffer msg = new StringBuffer();
-//        msg.append("Could not detect the Doxia format for file: ");
-//        msg.append(f.getAbsolutePath());
-//        msg.append("\n Specify explicitly the Doxia format.");
-//        throw new UnsupportedOperationException(msg.toString());
-//    }
 
-//    /**
-//     * @param f      not null
-//     * @param format could be null
-//     * @return <code>true</code> if the file name computes the format.
-//     */
-//    private static boolean isDoxiaFileName(File f, String format) {
-//        if (f == null) {
-//            throw new IllegalArgumentException("f is required.");
-//        }
-//
-//        Pattern pattern = Pattern.compile("(.*?)\\." + format.toLowerCase(Locale.ENGLISH) + "$");
-//        Matcher matcher = pattern.matcher(f.getTitle().toLowerCase(Locale.ENGLISH));
-//
-//        return matcher.matches();
-//    }
-
-//    /**
-//     * @param xmlFile not null and should be a file.
-//     * @return the first tag name if found, <code>null</code> in other case.
-//     */
-//    private static String getFirstTag(File xmlFile) {
-//        if (xmlFile == null) {
-//            throw new IllegalArgumentException("xmlFile is required.");
-//        }
-//        if (!xmlFile.isFile()) {
-//            throw new IllegalArgumentException("The file '" + xmlFile.getAbsolutePath() + "' is not a file.");
-//        }
-//
-//        Reader reader = null;
-//        try {
-//            reader = ReaderFactory.newXmlReader(xmlFile);
-//            XmlPullParser parser = new MXParser();
-//            parser.setInput(reader);
-//            int eventType = parser.getEventType();
-//            while (eventType != XmlPullParser.END_DOCUMENT) {
-//                if (eventType == XmlPullParser.START_TAG) {
-//                    return parser.getTitle();
-//                }
-//                eventType = parser.nextToken();
-//            }
-//        } catch (FileNotFoundException e) {
-//            return null;
-//        } catch (XmlPullParserException e) {
-//            return null;
-//        } catch (IOException e) {
-//            return null;
-//        } finally {
-//            IOUtil.close(reader);
-//        }
-//
-//        return null;
-//    }
 }

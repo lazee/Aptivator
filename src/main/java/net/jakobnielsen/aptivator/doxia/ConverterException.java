@@ -22,10 +22,6 @@ import net.jakobnielsen.aptivator.AptivatorException;
 
 public class ConverterException extends AptivatorException {
 
-    public ConverterException(String message) {
-        super(message);
-    }
-
     public ConverterException(String message, Throwable cause) {
         super(message, cause);
     }

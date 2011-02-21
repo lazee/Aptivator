@@ -33,10 +33,7 @@ public class DesktopUtil {
     }
 
     private static boolean isDesktop() {
-        if (Desktop.isDesktopSupported()) {
-            return true;
-        }
-        return false;
+        return Desktop.isDesktopSupported();
     }
 
     private static Desktop getDesktop() {

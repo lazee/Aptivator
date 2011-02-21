@@ -15,11 +15,8 @@
  */
 package net.jakobnielsen.aptivator.settings.dao;
 
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.DomDriver;
 import net.jakobnielsen.aptivator.settings.entities.Settings;
 import org.apache.log4j.Logger;
-import org.codehaus.plexus.PlexusContainer;
 
 import java.awt.*;
 import java.io.File;
@@ -42,8 +39,6 @@ public class SettingsDaoProperties implements SettingsDao {
 
     private static final String propertiesFileName = "settings.properties";
 
-    private static final String BOOKMARKS_FILE_NAME = "bookmarks.xml";
-
     private static final String stylesheetsFileName = "stylesheets.cfg";
 
     private static final String AUTO_REFRESH_INTERVAL = "auto.refresh.interval";
@@ -56,16 +51,10 @@ public class SettingsDaoProperties implements SettingsDao {
 
     private File settingsDir;
 
-    private PlexusContainer plexus;
-
-    private XStream xstream;
-
     Logger log = Logger.getLogger(SettingsDaoProperties.class);
 
-    public SettingsDaoProperties(PlexusContainer plexus) {
+    public SettingsDaoProperties() {
         log.info("Initializing SettingsDatoPropertiesObject");
-        this.plexus = plexus;
-        this.xstream = new XStream(new DomDriver());
         settingsDir = new File(System.getProperty("user.home") + File.separator + propertiesDirName);
         if (settingsDir.isFile()) {
             log.debug("Deleting " + settingsDir.getAbsolutePath() + ".");
@@ -177,10 +166,6 @@ public class SettingsDaoProperties implements SettingsDao {
         Properties properties = new Properties();
         properties.load(new FileInputStream(getSettingsFile()));
         return properties;
-    }
-
-    private File getBookmarksFile() {
-        return new File(settingsDir, File.separator + BOOKMARKS_FILE_NAME);
     }
 
     private File getStylesheetsFile() {
