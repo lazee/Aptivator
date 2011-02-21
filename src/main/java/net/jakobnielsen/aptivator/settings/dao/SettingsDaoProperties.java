@@ -17,25 +17,19 @@ package net.jakobnielsen.aptivator.settings.dao;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
-import net.jakobnielsen.aptivator.bookmark.entities.Bookmarks;
-import net.jakobnielsen.aptivator.bookmark.entities.Group;
 import net.jakobnielsen.aptivator.doxia.book.BookReader;
 import net.jakobnielsen.aptivator.settings.entities.Settings;
 import org.apache.log4j.Logger;
 import org.codehaus.plexus.PlexusContainer;
 
-import java.awt.Dimension;
+import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.Scanner;
 import java.util.StringTokenizer;
 
 /**
@@ -92,7 +86,6 @@ public class SettingsDaoProperties implements SettingsDao {
         try {
             Settings s = convertPropertiesToSettings(getProperties());
             s.getStylesheets().loadFromFile(getStylesheetsFile());
-            s.setBookmarks(getBookmarks());
             return s;
         } catch (IOException ex) {
             return new Settings();
@@ -104,12 +97,6 @@ public class SettingsDaoProperties implements SettingsDao {
             return;
         }
         storeProperties(convertSettingsToProperties(settings));
-        try {
-            storeBookmarks(settings.getBookmarks());
-        } catch (IOException e) {
-            // FIXME Should throw an exception
-            e.printStackTrace();
-        }
         settings.getStylesheets().store(getStylesheetsFile());
     }
 
@@ -183,49 +170,6 @@ public class SettingsDaoProperties implements SettingsDao {
         }
         sb.append("}");
         return sb.toString();
-    }
-
-    private Bookmarks getBookmarks() throws IOException {
-        log.debug("Reading bookmarks from file");
-        Group gn = (Group) xstream.fromXML(readTextFile(getBookmarksFile()));
-        if (gn == null) {
-            new Bookmarks();
-        }
-        return new Bookmarks(gn);
-    }
-
-    private void storeBookmarks(Bookmarks bookmarks) throws IOException {
-        log.debug("Storing bookmarks to file");
-        writeTextFile(getBookmarksFile(), xstream.toXML(bookmarks.getRoot()));
-    }
-
-    private String readTextFile(File file) throws FileNotFoundException {
-        StringBuilder builder = new StringBuilder();
-        String NL = System.getProperty("line.separator");
-        Scanner scanner = new Scanner(file, "utf-8");
-        try {
-            while (scanner.hasNextLine()) {
-                builder.append(scanner.nextLine() + NL);
-            }
-        }
-        finally {
-            scanner.close();
-        }
-        return builder.toString();
-    }
-
-    private void writeTextFile(File file, String text) throws IOException {
-        Writer out = new OutputStreamWriter(new FileOutputStream(file), "utf-8");
-        try {
-            out.write(text);
-        }
-        finally {
-            try {
-                out.close();
-            } catch (Exception e) {
-                // Not handling problems occuring when closing a stream
-            }
-        }
     }
 
     private void storeProperties(Properties properties) {

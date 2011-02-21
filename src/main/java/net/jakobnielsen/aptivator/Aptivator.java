@@ -15,10 +15,6 @@
  */
 package net.jakobnielsen.aptivator;
 
-import net.jakobnielsen.aptivator.bookmark.BookmarkTree;
-import net.jakobnielsen.aptivator.bookmark.BookmarkTreeModel;
-import net.jakobnielsen.aptivator.bookmark.entities.Bookmark;
-import net.jakobnielsen.aptivator.bookmark.entities.Group;
 import net.jakobnielsen.aptivator.dialog.AboutBox;
 import net.jakobnielsen.aptivator.dialog.AptivatorExportChooser;
 import net.jakobnielsen.aptivator.dialog.AptivatorFileChooser;
@@ -34,24 +30,8 @@ import org.apache.log4j.Logger;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.PlexusContainerException;
 
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTabbedPane;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import javax.swing.TransferHandler;
-import javax.swing.UIManager;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Toolkit;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -88,24 +68,16 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
 
     private JMenu documentMenu;
 
-    private BookmarkTree bookmarkTree;
-
-    //private BookTree bookTree;
-
     private boolean firstDocument = true;
 
     private File activeExportDir = new File("");
 
     private Logger log = Logger.getLogger(Aptivator.class);
 
-    /**
-     * Plexus container
-     */
+    /** Plexus container */
     private PlexusContainer plexus;
 
-    /**
-     * Constructor method
-     */
+    /** Constructor method */
     public Aptivator() {
     }
 
@@ -118,9 +90,7 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
         this.args = args;
     }
 
-    /**
-     * Start the Aptivator application
-     */
+    /** Start the Aptivator application */
     public void run() {
         try {
             plexus = PlexusHelper.startPlexusContainer();
@@ -143,9 +113,7 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
         }
     }
 
-    /**
-     * Configure the user interface
-     */
+    /** Configure the user interface */
     private void configureUI() {
 
         UIManager.put("Application.useSystemFontSettings", Boolean.TRUE);
@@ -160,42 +128,15 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
         }
     }
 
-    /**
-     * Build the user interface
-     */
+    /** Build the user interface */
     private void buildInterface() {
-
-        /* Bookmarks panel */
-        JPanel bookmarksPanel = new JPanel(new BorderLayout());
-        bookmarksPanel.add(buildBookmarkBar(), BorderLayout.CENTER);
-
-        /* Books panel */
-        //JPanel booksPanel = new JPanel(new BorderLayout());
-        //booksPanel.add(buildBookBar(), BorderLayout.CENTER);
-
-        /* Tree contentPanel */
-        JPanel treePanel = new JPanel(new BorderLayout());
-
-
-        JTabbedPane tabbedTreePane = new JTabbedPane();
-        tabbedTreePane.addTab("Bookmarks", null, bookmarksPanel, "");
-        //tabbedTreePane.addTab("Books", null, booksPanel, "");
-
-        treePanel.add(tabbedTreePane, BorderLayout.CENTER);
-
 
         /* Content contentPanel */
         contentPanel = new JPanel(new BorderLayout());
 
-        /* Split panel */
-        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, treePanel, contentPanel);
-        splitPane.setOneTouchExpandable(true);
-        splitPane.setDividerLocation(250);
-
-
         /* Main panel */
         JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.add(splitPane);
+        mainPanel.add(contentPanel);
         mainPanel.add(buildStatusBar(), BorderLayout.SOUTH);
 
         /* Main frame */
@@ -213,35 +154,6 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
         jframe.setVisible(true);
     }
 
-    private JComponent buildBookmarkBar() {
-        bookmarkTree = new BookmarkTree(settings.getBookmarks().getRoot());
-        bookmarkTree.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        if (ActionCommands.ADD_GROUP.equals(e.getActionCommand())) {
-                            Group gn = (Group) e.getSource();
-                            //gn.insert(new Group(gn, "Random"), 0);
-                            storeSettings();
-                        } else if (ActionCommands.OPEN_BOOKMARK.equals(e.getActionCommand())){
-                            Bookmark b = (Bookmark) e.getSource();
-                            loadDocument(b.getPath());
-                        }
-                    }
-                }
-        );
-        fillBookmarkBar();
-        return new JScrollPane(bookmarkTree);
-    }
-
-    private void fillBookmarkBar() {
-        bookmarkTree.setModel(new BookmarkTreeModel(settings.getBookmarks().getRoot()));
-    }
-
-    //private JComponent buildBookBar() {
-    //bookTree = new BookTree(settings.getBooks());
-    //return new JScrollPane(bookTree);
-    //}
-
     private JComponent buildStatusBar() {
         sb = new StatusBar();
         sb.setTextWhenEmpty("APTIVATOR 1.0");
@@ -251,16 +163,6 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
     public void actionPerformed(ActionEvent e) {
         if ("Refresh".equals(e.getActionCommand())) {
             reloadDocument();
-        } else if ("Bookmark".equals(e.getActionCommand())) {
-            if (settings.getBookmarks().isBookmarked(aptivatorDocument.getFile())) {
-                settings.getBookmarks().removeBookmark(aptivatorDocument.getFile());
-                aptivatorDocument.setBookmarkButton(false);
-            } else {
-                //settings.getBookmarks().addBookmark(new Bookmark(aptivatorDocument.getFile().getAbsolutePath(), aptivatorDocument.getFile()));
-                //aptivatorDocument.setBookmarkButton(true);
-            }
-            fillBookmarkBar();
-            storeSettings();
         } else if ("Export".equals(e.getActionCommand())) {
             exportDocument();
         } else if ("ViewBrowser".equals(e.getActionCommand())) {
@@ -445,9 +347,7 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
         return menuBar;
     }
 
-    /**
-     * Settings **
-     */
+    /** Settings ** */
     private void loadSettings() {
         SettingsDao dao = new SettingsDaoProperties(plexus);
         settings = dao.getSettings();
@@ -462,9 +362,7 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
         return settings;
     }
 
-    /**
-     * Create the file chooser dialog
-     */
+    /** Create the file chooser dialog */
     private void createFileChooser() {
         fileChooser = new AptivatorFileChooser("apt");
     }
@@ -536,7 +434,6 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
             public void run() {
                 try {
                     aptivatorDocument.setFile(f);
-                    aptivatorDocument.setBookmarked(settings.getBookmarks().isBookmarked(f));
                     aptivatorDocument.loadAptFile();
                     settings.addRecentFile(f);
                     storeSettings();

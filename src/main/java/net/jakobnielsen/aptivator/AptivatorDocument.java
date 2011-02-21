@@ -69,8 +69,6 @@ public class AptivatorDocument {
 
     private Styler styler;
 
-    private JButton bookmarkButton;
-
     private File file;
 
     private StyleSheet activeStyleSheet;
@@ -80,8 +78,6 @@ public class AptivatorDocument {
     DefaultComboBoxModel stylesheetsModel = new DefaultComboBoxModel();
 
     private JComboBox stylesheetCombo;
-
-    private boolean isBookmarked = false;
 
     private PlexusContainer plexus;
 
@@ -98,10 +94,6 @@ public class AptivatorDocument {
 
     public File getFile() {
         return file;
-    }
-
-    public void setBookmarked(boolean bookmarked) {
-        isBookmarked = bookmarked;
     }
 
     public void setStylesheets(Stylesheets stylesheets) {
@@ -162,11 +154,6 @@ public class AptivatorDocument {
         JToolBar toolBar = new JToolBar("Still draggable");
         toolBar.setFloatable(false);
         toolBar.setRollover(true);
-
-        bookmarkButton =
-                makeButton(AptivatorUtil.BOOKMARK_ICON_UNSELECTED, "Bookmark", "Bookmark document", "Bookmark", true);
-        bookmarkButton.addActionListener(listener);
-        toolBar.add(bookmarkButton);
 
         JButton refreshButton = makeButton(AptivatorUtil.REFRESH_ICON, "Refresh", "Refresh document", "Refresh", true);
         refreshButton.addActionListener(listener);
@@ -280,7 +267,6 @@ public class AptivatorDocument {
             } else {
                 Logger.getLogger(Aptivator.class.getName()).log(Level.SEVERE, "Writer error");
             }
-            setBookmarkButton(isBookmarked);
         } catch (UnsupportedFormatException ex) {
             Logger.getLogger(Aptivator.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IllegalArgumentException ex) {
@@ -378,12 +364,5 @@ public class AptivatorDocument {
         return true;
     }
 
-    public void setBookmarkButton(boolean state) {
-        if (state) {
-            bookmarkButton.setIcon(AptivatorUtil.createIcon(AptivatorUtil.BOOKMARK_ICON_SELECTED));
-        } else {
-            bookmarkButton.setIcon(AptivatorUtil.createIcon(AptivatorUtil.BOOKMARK_ICON_UNSELECTED));
-        }
-    }
 
 }
