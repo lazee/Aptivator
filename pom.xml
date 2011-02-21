@@ -23,12 +23,23 @@
     <packaging>jar</packaging>
     <version>0.1-SNAPSHOT</version>
     <name>Aptivator</name>
-    <description>Apt viewer</description>
-    <url>http://maven.apache.org</url>
+    <description>Doxia Apt viewer</description>
+    <url>http://aptivator.docfuse.org</url>
     <licenses>
         <license>
         </license>
     </licenses>
+    <developers>
+        <developer>
+            <id>lazee</id>
+            <name>Jakob Vad Nielsen</name>
+            <email>jakobvadnielsen@gmail.com</email>
+            <url>http://www.jakobnielsen.net</url>
+            <roles>
+                <role>Developer</role>
+            </roles>
+        </developer>
+    </developers>
     <build>
         <plugins>
             <plugin>
