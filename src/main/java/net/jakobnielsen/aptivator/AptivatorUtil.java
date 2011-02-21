@@ -21,10 +21,6 @@ import java.net.URL;
 
 public class AptivatorUtil {
 
-    public static final String BOOKMARK_ICON_SELECTED = "001_15";
-
-    public static final String BOOKMARK_ICON_UNSELECTED = "001_17";
-
     public static final String EXPORT_ICON = "001_53";
 
     public static final String REFRESH_ICON = "001_39";
