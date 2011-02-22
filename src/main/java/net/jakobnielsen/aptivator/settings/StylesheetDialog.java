@@ -96,7 +96,7 @@ public class StylesheetDialog extends JDialog {
                 new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         if (isValidTitle() && isValidFilePath()) {
-                            // FIXME Validation
+                            // TODO We should add some sort of validation here
                             storeStyleSheetInObject();
                             setVisible(false);
                             //dispose();

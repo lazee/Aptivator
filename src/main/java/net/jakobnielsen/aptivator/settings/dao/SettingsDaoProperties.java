@@ -34,7 +34,7 @@ import java.util.StringTokenizer;
  *
  * @author <a href="mailto:jakobnielsen@gmail.com">Jakob Vad Nielsen</a>
  */
-public class SettingsDaoProperties implements SettingsDao {
+public class SettingsDaoProperties {
 
     private static final String propertiesDirName = ".aptivator";
 
@@ -73,6 +73,10 @@ public class SettingsDaoProperties implements SettingsDao {
                 log.error("Could not create : " + settingsDir.getAbsolutePath());
             }
         }
+    }
+
+    public File getSettingsDir() {
+        return settingsDir;
     }
 
     public Settings getSettings() {

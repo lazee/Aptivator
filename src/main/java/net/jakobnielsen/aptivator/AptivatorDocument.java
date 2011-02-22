@@ -26,6 +26,7 @@ import net.jakobnielsen.aptivator.doxia.wrapper.ByteArrayOutputStreamWrapper;
 import net.jakobnielsen.aptivator.doxia.wrapper.InputFileWrapper;
 import net.jakobnielsen.aptivator.renderer.AptivatorScrollPane;
 import net.jakobnielsen.aptivator.renderer.Styler;
+import net.jakobnielsen.aptivator.settings.dao.SettingsDaoProperties;
 import net.jakobnielsen.aptivator.settings.entities.StyleSheet;
 import net.jakobnielsen.aptivator.settings.entities.Stylesheets;
 import org.apache.log4j.Logger;
@@ -51,8 +52,13 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.ResourceBundle;
+
+/*
+   TODO: To much code duplication going on here.
+*/
 
 /**
  * Aptivator document viewer
@@ -71,7 +77,7 @@ public class AptivatorDocument {
 
     private StyleSheet defaultStylesheet;
 
-    DefaultComboBoxModel stylesheetsModel = new DefaultComboBoxModel();
+    private DefaultComboBoxModel stylesheetsModel = new DefaultComboBoxModel();
 
     private JComboBox stylesheetCombo;
 
@@ -81,7 +87,10 @@ public class AptivatorDocument {
 
     private ResourceBundle rb;
 
-    public AptivatorDocument(PlexusContainer plexus, ResourceBundle rb) {
+    private SettingsDaoProperties settingsDao;
+
+    public AptivatorDocument(PlexusContainer plexus, ResourceBundle rb, SettingsDaoProperties settingsDao) {
+        this.settingsDao = settingsDao;
         this.plexus = plexus;
         this.rb = rb;
         this.styler = new Styler();
@@ -187,14 +196,14 @@ public class AptivatorDocument {
                     if (file != null) {
                         try {
                             loadAptFile();
-                        } catch (UnsupportedEncodingException e1) {
-                            e1.printStackTrace();
-                        } catch (FileNotFoundException e1) {
-                            e1.printStackTrace();
-                        } catch (UnsupportedFormatException e1) {
-                            e1.printStackTrace();
-                        } catch (ConverterException e1) {
-                            e1.printStackTrace();
+                        } catch (UnsupportedEncodingException ex) {
+                            log.error("buildToolbar() " + ex.getMessage());
+                        } catch (FileNotFoundException ex) {
+                            log.error("buildToolbar() " + ex.getMessage());
+                        } catch (UnsupportedFormatException ex) {
+                            log.error("buildToolbar() " + ex.getMessage());
+                        } catch (ConverterException ex) {
+                            log.error("buildToolbar() " + ex.getMessage());
                         }
                     }
                 }
@@ -217,7 +226,6 @@ public class AptivatorDocument {
         return button;
     }
 
-
     private JComponent buildMainPanel() {
         try {
             return new AptivatorScrollPane(getXHTMLPanel());
@@ -228,53 +236,68 @@ public class AptivatorDocument {
 
     public boolean loadAptFile()
             throws UnsupportedEncodingException, FileNotFoundException, UnsupportedFormatException, ConverterException {
+        return loadAptFile(file);
+    }
 
-        if (file == null) {
+    /*
+      TODO Filthy method. Need to do some cleaning here soon.
+     */
+    private boolean loadAptFile(File f)
+            throws UnsupportedEncodingException, FileNotFoundException, UnsupportedFormatException, ConverterException {
+
+        if (f == null) {
             ErrorBox.show(rb.getString("error.file.null"), rb.getString("error"));
             return false;
-        } else if (!file.exists()) {
-            ErrorBox.show(rb.getString("error.file.missing") + ": " + file.getAbsolutePath(), rb.getString("error"));
+        } else if (!f.exists()) {
+            ErrorBox.show(rb.getString("error.file.missing") + ": " + f.getAbsolutePath(), rb.getString("error"));
         }
 
-        try {
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            InputFileWrapper inputFileWrapper = InputFileWrapper.valueOf(file.getAbsolutePath(), "apt",
-                    DefaultConverter.autoDetectEncoding(file), DefaultConverter.SUPPORTED_FROM_FORMAT);
-            ByteArrayOutputStreamWrapper outputStreamWrapper = ByteArrayOutputStreamWrapper.valueOf(
-                    byteArrayOutputStream,
-                    "xhtml", "utf-8", new String[]{DefaultConverter.XHTML_SINK});
-            DefaultConverter defaultConverter = new DefaultConverter();
-            defaultConverter.convert(plexus, inputFileWrapper, outputStreamWrapper, DefaultConverter.XHTML_SINK);
-            if (outputStreamWrapper.getOutputStream() != null) {
-                ByteArrayInputStream bais;
-                if (activeStyleSheet != null) {
-                    bais = styler.styleFromFile(outputStreamWrapper.getOutputStream().toString(),
-                            activeStyleSheet.getSrcFile());
-                } else {
-                    bais = styler.style(outputStreamWrapper.getOutputStream().toString());
-                }
-                if (bais != null) {
-                    try {
-                        getXHTMLPanel().setDocument(bais, "");
-                    } catch (Exception ex) {
-                        log.error(ex);
-                    }
-                } else {
-                    log.error("BAIS error");
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        InputFileWrapper inputFileWrapper = InputFileWrapper.valueOf(f.getAbsolutePath(), "apt",
+                DefaultConverter.autoDetectEncoding(f), DefaultConverter.SUPPORTED_FROM_FORMAT);
+        ByteArrayOutputStreamWrapper outputStreamWrapper = ByteArrayOutputStreamWrapper.valueOf(
+                byteArrayOutputStream,
+                "xhtml", "utf-8", new String[]{DefaultConverter.XHTML_SINK});
+        DefaultConverter defaultConverter = new DefaultConverter();
+        defaultConverter.convert(plexus, inputFileWrapper, outputStreamWrapper, DefaultConverter.XHTML_SINK);
+        if (outputStreamWrapper.getOutputStream() != null) {
+            ByteArrayInputStream bais;
+            if (activeStyleSheet != null) {
+                bais = styler.styleFromFile(outputStreamWrapper.getOutputStream().toString(),
+                        activeStyleSheet.getSrcFile());
+            } else {
+                bais = styler.style(outputStreamWrapper.getOutputStream().toString());
+            }
+            if (bais != null) {
+                try {
+                    getXHTMLPanel().setDocument(bais, "");
+                } catch (Exception ex) {
+                    log.error(ex);
                 }
             } else {
-                log.error("Write error");
+                log.error("BAIS error");
             }
-        } catch (UnsupportedFormatException ex) {
-            log.error(ex);
-        } catch (IllegalArgumentException ex) {
-            log.error(ex);
-        } catch (UnsupportedEncodingException ex) {
-            log.error(ex);
-        } catch (FileNotFoundException ex) {
-            log.error(ex);
+        } else {
+            log.error("Write error");
         }
+
         return true;
+    }
+
+    public void setError() {
+        try {
+            loadAptFile(new File(AptivatorDocument.class.getResource("/META-INF/error.apt").toURI()));
+        } catch (UnsupportedEncodingException e) {
+            log.error(e.getMessage());
+        } catch (FileNotFoundException e) {
+            log.error(e.getMessage());
+        } catch (UnsupportedFormatException e) {
+            log.error(e.getMessage());
+        } catch (ConverterException e) {
+            log.error(e.getMessage());
+        } catch (URISyntaxException e) {
+            log.error(e.getMessage());
+        }
     }
 
     public boolean storeAsPdf(File outputFile) {
@@ -332,7 +355,8 @@ public class AptivatorDocument {
                 }
                 if (out != null) {
                     Writer output = null;
-                    File outputFile = new File("/tmp/foo.html"); // FIXME What the f***?
+                    // TODO Maybe introduce unique name for a preview and clean up old preview files
+                    File outputFile = new File(settingsDao.getSettingsDir(), "aptivator.html");
                     try {
                         output = new BufferedWriter(new FileWriter(outputFile));
                         output.write(out);

@@ -5,7 +5,7 @@
 Introduction
 ~~~~~~~~~~~~
 
- Aptivator is a Java desktop client for viewing of Doxia APT files ({{http://maven.apache.org/doxia/}}).
+ Aptivator is a Java desktop client for viewing of Doxia APT files ({{http://maven.apache.org/doxia/}).
 
  It can be used to validate that a file looks fine before it is committed, but also to export an apt file into a PDF
  file.

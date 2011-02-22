@@ -24,7 +24,6 @@ import net.jakobnielsen.aptivator.doxia.UnsupportedFormatException;
 import net.jakobnielsen.aptivator.i18n.CustomClassLoader;
 import net.jakobnielsen.aptivator.plexus.PlexusHelper;
 import net.jakobnielsen.aptivator.settings.SettingsDialog;
-import net.jakobnielsen.aptivator.settings.dao.SettingsDao;
 import net.jakobnielsen.aptivator.settings.dao.SettingsDaoProperties;
 import net.jakobnielsen.aptivator.settings.entities.Settings;
 import org.apache.log4j.Level;
@@ -90,7 +89,7 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
 
     private LogListModel logListModel;
 
-    private SettingsDao settingsDAO;
+    private SettingsDaoProperties settingsDAO;
 
     private ResourceBundle rb;
 
@@ -115,11 +114,11 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
         try {
             plexus = PlexusHelper.startPlexusContainer();
         } catch (PlexusContainerException e) {
-            e.printStackTrace();
+            log.fatal("Could not load Plexus Container");
         }
         loadSettings();
         configureUI();
-        aptivatorDocument = new AptivatorDocument(plexus, rb);
+        aptivatorDocument = new AptivatorDocument(plexus, rb, settingsDAO);
         aptivatorDocument.createXHtmlPanel();
         buildInterface();
         createFileChooser();
@@ -128,7 +127,7 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
             if (doc.exists() && doc.canRead()) {
                 loadDocument(doc);
             } else {
-                // TODO View error box
+                ErrorBox.show(rb.getString("error.file.missing " + doc.getAbsolutePath()), rb.getString("error"));
             }
         }
     }
@@ -138,8 +137,7 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
         try {
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
         } catch (Exception e) {
-            e.printStackTrace();
-            log.error(rb.getString("error.look.and.feel") + e);
+            log.error(rb.getString("error.look.and.feel") + ": " + e.getMessage());
         }
     }
 
@@ -256,8 +254,8 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
 
     private JList buildLogMonitorList() {
         JList ml = new JList(logListModel);
-        ml.setBackground(Color.DARK_GRAY);
-        ml.setForeground(Color.WHITE);
+        ml.setBackground(Color.WHITE);
+        ml.setForeground(Color.DARK_GRAY);
 
         createPopupMenu(ml);
 
@@ -329,20 +327,18 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
         documentMenu.add(item);
         menuBar.add(documentMenu);
 
+        /* View in browser */
+        item = SwingTools.createMenuItem(this, rb.getString("menu.view.browser"), VIEW_BROWSER);
+        documentMenu.add(item);
+        
+
         /* Help */
         JMenu menu = new JMenu(rb.getString("menu.help"));
 
-        //if (System.getProperty("mrj.version") == null) {
         item = SwingTools.createMenuItem(this, rb.getString("menu.about"), ABOUT);
         item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A,
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
-
         menu.add(item);
-
-        //} else {
-        //     new MacOSAboutHandler();
-        //}
-
         menuBar.add(menu);
         return menuBar;
     }
@@ -390,9 +386,9 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
                 loadDocument((File) data.get(0));
             }
         } catch (UnsupportedFlavorException e) {
-            e.printStackTrace();
+            log.error(rb.getString("error.load.dragged") + ": " + e.getMessage());
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(rb.getString("error.load.dragged") + ": " + e.getMessage());
         }
         return false;
     }
@@ -409,7 +405,7 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
             } catch (UnsupportedFormatException ex) {
                 log.error(rb.getString("error.invalid.apt"));
             } catch (ConverterException ex) {
-                log.error(rb.getString("error.parser.exception") + ": " + ex.getMessage());
+                log.error(ex.getMessage());
             }
         }
     }
@@ -434,12 +430,16 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
                     log.info(rb.getString("info.load.ok") + " : " + f.getAbsolutePath());
                 } catch (UnsupportedEncodingException ex) {
                     log.error(rb.getString("error.encoding.problems"));
+                    aptivatorDocument.setError();
                 } catch (FileNotFoundException ex) {
                     log.error(rb.getString("error.file.missing"));
+                    aptivatorDocument.setError();
                 } catch (UnsupportedFormatException ex) {
                     log.error(rb.getString("error.invalid.apt"));
+                    aptivatorDocument.setError();
                 } catch (ConverterException ex) {
-                    log.error(rb.getString("error.parser.exception") +  ": " + ex.getMessage());
+                    log.error(ex.getMessage());
+                    aptivatorDocument.setError();
                 }
             }
         }

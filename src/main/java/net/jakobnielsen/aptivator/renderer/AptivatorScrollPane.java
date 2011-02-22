@@ -24,41 +24,33 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
 
 /**
- * <p><code>FSScrollPane</code> is a JScrollPane set up to support keyboard navigation of an XHTML/XML
- * document rendered with Flying Saucer. In particular, it assigns key bindings to the view's {@link javax.swing.InputMap}
- * for page-up, page-down, line-up/down, page-start and page-end.
- * The amount the document scrolls is based on the current viewport and the current line height.
- * If the view is resized, the scroll increment is automatically adjusted. Using FSScrollPane
- * to display an {@link org.xhtmlrenderer.simple.XHTMLPanel} should save you time as your users
- * will have standard keyboard navigation out of the box.</p>
- *
+ * <p><code>FSScrollPane</code> is a JScrollPane set up to support keyboard navigation of an XHTML/XML document rendered
+ * with Flying Saucer. In particular, it assigns key bindings to the view's {@link javax.swing.InputMap} for page-up,
+ * page-down, line-up/down, page-start and page-end. The amount the document scrolls is based on the current viewport
+ * and the current line height. If the view is resized, the scroll increment is automatically adjusted. Using
+ * FSScrollPane to display an {@link org.xhtmlrenderer.simple.XHTMLPanel} should save you time as your users will have
+ * standard keyboard navigation out of the box.</p>
+ * <p/>
  * <p>To use <code>FSScrollPane</code>, just instantiate it and add your XHTMLPanel on instantiation:
  * <pre>
  * XHTMLPanel panel = new XHTMLPanel();
  * FSScrollPane scroll = new FSScrollPane(view);
  * </pre>
- * <p>The current input mappings to keys are:
- * <dl>
- * <dt>Scroll to Start<dt><dd>CONTROL-HOME or HOME</dd>
- * <dt>Scroll Up 1 Page<dt><dd>PAGEUP</dd>
- * <dt>Scroll Up 1 Line<dt><dd>UP-ARROW</dd>
- * <dt>Scroll to Bottom<dt><dd>CONTROL-END or END</dd>
- * <dt>Scroll Down 1 Page<dt><dd>PAGEDOWN</dd>
- * <dt>Scroll Down 1 Line<dt><dd>DOWN-ARROW</dd>
- * </dl>
- * This class declares six constant strings you can use if you want to override one of these default
- * settings on the <code>InputMap</code>; these Strings will be trigger the relevant <code>Action</code>
- * associated with the scrolling. To change the key binding for "Scroll to Top" to <code>Alt-Home</code>,
- * do this:
+ * <p>The current input mappings to keys are: <dl> <dt>Scroll to Start<dt><dd>CONTROL-HOME or HOME</dd> <dt>Scroll Up 1
+ * Page<dt><dd>PAGEUP</dd> <dt>Scroll Up 1 Line<dt><dd>UP-ARROW</dd> <dt>Scroll to Bottom<dt><dd>CONTROL-END or END</dd>
+ * <dt>Scroll Down 1 Page<dt><dd>PAGEDOWN</dd> <dt>Scroll Down 1 Line<dt><dd>DOWN-ARROW</dd> </dl> This class declares
+ * six constant strings you can use if you want to override one of these default settings on the <code>InputMap</code>;
+ * these Strings will be trigger the relevant <code>Action</code> associated with the scrolling. To change the key
+ * binding for "Scroll to Top" to <code>Alt-Home</code>, do this:
  * <pre>
  * panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).
-                put(KeyStroke.getKeyStroke(KeyEvent.VK_HOME, KeyEvent.ALT_MASK), FSScrollPane.PAGE_START);
+ * put(KeyStroke.getKeyStroke(KeyEvent.VK_HOME, KeyEvent.ALT_MASK), FSScrollPane.PAGE_START);
  * </pre>
- *
  *
  * @author Patrick Wright
  */
 public class AptivatorScrollPane extends JScrollPane {
+
     private static final long serialVersionUID = 2L;
 
     /** Constant used for mapping a key binding to "scroll down 1 page" */
@@ -82,15 +74,12 @@ public class AptivatorScrollPane extends JScrollPane {
     /* Instantiates a new FSScrollPane around the given Panel; see class documentation. */
     public AptivatorScrollPane(JPanel aview) {
         super(aview, VERTICAL_SCROLLBAR_AS_NEEDED, HORIZONTAL_SCROLLBAR_AS_NEEDED);
-
-        // TODO: need to get line-height, I think; this should not be fixed (PWW 28-01-05)
         getVerticalScrollBar().setUnitIncrement(15);
     }
 
     /* @Override */
-    public void setViewportView(Component view)
-    {
-        setPreferredSize(new Dimension((int)view.getSize().getWidth(), (int)view.getSize().getHeight()));
+    public void setViewportView(Component view) {
+        setPreferredSize(new Dimension((int) view.getSize().getWidth(), (int) view.getSize().getHeight()));
         if (view instanceof JComponent) {
             setDefaultInputMap((JComponent) view);
             setDefaultActionMap((JComponent) view);
@@ -180,7 +169,7 @@ public class AptivatorScrollPane extends JScrollPane {
 
     /* Adds a component listener on the view for resize events, to adjust the scroll increment. */
     private void addResizeListener(Component view) {
-        view.addComponentListener( new ComponentAdapter() {
+        view.addComponentListener(new ComponentAdapter() {
             /** Invoked when the component's size changes. Reset scrollable increment, because
              * page-down/up is relative to current view size.
              */
@@ -191,8 +180,8 @@ public class AptivatorScrollPane extends JScrollPane {
                 // page
 
                 // want to page down leaving the current line at the bottom be the first at the top
-                // TODO: this will only work once unit increment is set correctly; multiplier is a workaround (PWW 28-01-05)
-                int incr = (int)(getSize().getHeight() - (bar.getUnitIncrement(1) * 3));
+                // this will only work once unit increment is set correctly; multiplier is a workaround (PWW 28-01-05)
+                int incr = (int) (getSize().getHeight() - (bar.getUnitIncrement(1) * 3));
                 getVerticalScrollBar().setBlockIncrement(incr);
             }
         });

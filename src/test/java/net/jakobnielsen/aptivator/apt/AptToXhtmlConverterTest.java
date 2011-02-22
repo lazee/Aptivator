@@ -17,14 +17,8 @@
 
 package net.jakobnielsen.aptivator.apt;
 
-import java.io.File;
-import java.io.Writer;
 import junit.framework.TestCase;
 
-/**
- *
- * @author jakob
- */
 public class AptToXhtmlConverterTest extends TestCase {
     
     public AptToXhtmlConverterTest(String testName) {
