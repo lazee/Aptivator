@@ -1,18 +1,3 @@
-/*
- * Copyright (c) 2008-2011 Jakob Vad Nielsen
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package net.jakobnielsen.aptivator.doxia;
 
 import com.ibm.icu.text.CharsetDetector;
@@ -42,10 +27,9 @@ import java.io.Reader;
 import java.util.Locale;
 
 /**
- * Default implementation of <code>Converter</code>
+ * Modified implementation of the default <code>Converter</code>
  *
- * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
- * @version $Id: DefaultConverter.java 712860 2008-11-10 22:54:37Z hboutemy $
+ * Original author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  */
 public class DefaultConverter {
 
@@ -62,13 +46,6 @@ public class DefaultConverter {
 
     /** Supported output format, i.e. supported Doxia Sink */
     public static final String[] SUPPORTED_TO_FORMAT = {XHTML_SINK, ITEXT_SINK};
-
-    ///**
-    // * {@inheritDoc}
-    // */
-    //public void enableLogging(Log log) {
-    //    this.log = log;
-    //}
 
     /**
      * Returns a logger for this sink. If no logger has been configured, a new SystemStreamLog is returned.
@@ -111,54 +88,6 @@ public class DefaultConverter {
             Sink sink;
             try {
                 sink = sinkFactory.createSink(output.getOutputStream(), output.getEncoding());
-            } catch (IOException e) {
-                throw new ConverterException("IOException: " + e.getMessage(), e);
-            }
-            if (getLog().isDebugEnabled()) {
-                getLog().debug("Sink used: " + sink.getClass().getName());
-            }
-
-            parse(parser, input.getFormat(), new FileReader(input.getFile()), sink);
-        } catch (FileNotFoundException ex) {
-            log.error(ex);
-        }
-    }
-
-    public void convert(PlexusContainer plexus, InputFileWrapper input, File outputDir, String name, String outFormat)
-            throws UnsupportedFormatException, ConverterException {
-        if (input == null) {
-            throw new IllegalArgumentException("input is required");
-        }
-        if (outputDir == null) {
-            throw new IllegalArgumentException("output is required");
-        }
-        if (name == null) {
-            throw new IllegalArgumentException("filename is required");
-        }
-
-
-        try {
-            Parser parser;
-            try {
-                parser = ConverterUtil.getParser(plexus, input.getFormat(), SUPPORTED_FROM_FORMAT);
-            } catch (ComponentLookupException e) {
-                throw new ConverterException("ComponentLookupException: " + e.getMessage(), e);
-            }
-
-            if (getLog().isDebugEnabled()) {
-                getLog().debug("Parser used: " + parser.getClass().getName());
-            }
-
-            SinkFactory sinkFactory;
-            try {
-                sinkFactory = ConverterUtil.getSinkFactory(plexus, outFormat, SUPPORTED_TO_FORMAT);
-            } catch (ComponentLookupException e) {
-                throw new ConverterException("ComponentLookupException: " + e.getMessage(), e);
-            }
-
-            Sink sink;
-            try {
-                sink = sinkFactory.createSink(outputDir, name);
             } catch (IOException e) {
                 throw new ConverterException("IOException: " + e.getMessage(), e);
             }
