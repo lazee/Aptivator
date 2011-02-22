@@ -153,7 +153,7 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
 
     private JComponent buildStatusBar() {
         sb = new StatusBar();
-        sb.setTextWhenEmpty("APTIVATOR 1.0");
+        sb.setTextWhenEmpty("Aptivator " + settings.getAppVersion());
         return sb;
     }
 

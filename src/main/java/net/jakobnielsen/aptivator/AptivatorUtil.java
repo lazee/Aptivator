@@ -15,9 +15,13 @@
  */
 package net.jakobnielsen.aptivator;
 
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
+import javax.swing.*;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class AptivatorUtil {
 
@@ -40,6 +44,44 @@ public class AptivatorUtil {
         return new ImageIcon(AptivatorUtil.createImageUrl(name), description);
     }
 
+    public static String getMetaInfFile(String name) {
+        InputStream is = null;
+        try {
+            is = AptivatorUtil.class.getResourceAsStream("/META-INF/" + name);
+            if (is != null) {
+                StringBuffer out = new StringBuffer();
+                byte[] b = new byte[1000];
+                for (int n; (n = is.read(b)) != -1;) {
+                    out.append(new String(b, 0, n));
+                }
+                return out.toString();
+            }
+            return "";
+        } catch (IOException ex) {
+            Logger.getLogger(AptivatorUtil.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                if (is != null) {
+                    is.close();
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(AptivatorUtil.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return null;
+    }
+
+    public static Properties getMetaInfProperties(String name) {
+        InputStream is = AptivatorUtil.class.getResourceAsStream("/META-INF/" + name);
+        Properties p = new Properties();
+        try {
+            p.load(is);
+        } catch (IOException e) {
+            Logger.getLogger(AptivatorUtil.class.getName()).log(Level.WARNING, null, e);
+            return null;
+        }
+        return p;
+    }
 
 
 }

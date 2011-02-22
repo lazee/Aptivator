@@ -1,25 +1,63 @@
- mvn install:install-file -DgroupId=net.java.dev.xhtmlrenderer -DartifactId=core-renderer -Dversion=8.0-PRE2 -Dpackaging=jar -Dfile=core-renderer.jar -DrepositoryId=api-repository -DgeneratePom=true
+    ------
+    Aptivator
+    ------
 
- mvn deploy-deploy-file -DgroupId=net.java.dev.xhtmlrenderer -DartifactId=core-renderer -Dversion=8.0-PRE2 -Dpackaging=jar -Dfile=core-renderer.jar -DrepositoryId=api-repository -DgeneratePom=true -Durl=scp://gro.api.no/home/maven/public_html/repository
+Introduction
+~~~~~~~~~~~~
 
-TODO:
+ Aptivator is a Java desktop client for viewing of Doxia APT files ({{http://maven.apache.org/doxia/}}).
 
- * Add refresh timer (do refresh)
+ It can be used to validate that a file looks fine before it is committed, but also to export an apt file into a PDF
+ file.
 
- * Add statusbar showing timer info
+Features
+~~~~~~~~
 
- * Test on a lot of apt-files
+ * Support for most of the APT format
 
- * Test on linux and windows
+ * Configurable stylesheet (Make it look like you Maven site css)
 
- * Deal with renderer clicks
+ * Export to PDF based on your stylesheet (Makes it much prettier than the default Doxia PDF)
 
- * Add recent files (Last 10)
+ []
 
- * Rewrite Aptivator to use action classes instead of defining actions directly inline
+Future plans
+~~~~~~~~~~~~
 
- * Implement simple editor
+ * Image support. This is actually much harder than it sounds because of Doxia's way of looking at relative paths.
+   But a limited support will be added soon.
 
- * Reintroduce toolbar
+ * Support for snippets. It is not decided how the implementation will look like yet.
 
- * Fix bug in viewer that cause pagedown/arrows not to work before editor is activated
+ * Error monitor window. Instead of logging to the console.
+
+Development
+~~~~~~~~~~~
+
+ Aptivator is a java client that is build with Maven ({{http://maven.apache.org}}).
+
+ All dependencies are in the standard Maven repositories, except from the Flying Saucer XHTML Renderer package.
+ So you will need to download this manually and install it into your local Maven repository.
+
+ Download the package from here: {{http://code.google.com/p/flying-saucer/downloads/detail?name=flyingsaucer-R8.zip}}
+
+ Follow these steps:
+
++----------+
+> unzip flyingsaucer-R8-src.zip
+> cd flyingsaucer-R8-src
+>  mvn install:install-file -DgroupId=net.java.dev.xhtmlrenderer -DartifactId=core-renderer -Dversion=8.0-PRE2 \
+      -Dpackaging=jar -Dfile=core-renderer.jar -DrepositoryId=api-repository -DgeneratePom=true
++----------+
+
+ You should now be ready to compile Aptivator.
+
++----------+
+Aptivator> mvn clean compile
++----------+
+
+ And also to run it.
+
++----------+
+Aptivator> mvn exec:java
++----------+

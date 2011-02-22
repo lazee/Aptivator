@@ -15,16 +15,14 @@
  */
 package net.jakobnielsen.aptivator.dialog;
 
+import net.jakobnielsen.aptivator.AptivatorUtil;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class AboutBox extends JDialog {
 
@@ -129,37 +127,17 @@ public class AboutBox extends JDialog {
     }
 
     private String getLicenses() {
-        return getFile("licenses.txt");
+        return getNotNullFile("licenses.txt");
     }
 
     private String getLicense() {
-        return getFile("license.txt");
+        return getNotNullFile("license.txt");
     }
 
-    private String getFile(String name) {
-        InputStream is = null;
-        try {
-            is = AboutBox.class.getResourceAsStream("/META-INF/" + name);
-            if (is != null) {
-                StringBuffer out = new StringBuffer();
-                byte[] b = new byte[1000];
-                for (int n; (n = is.read(b)) != -1;) {
-                    out.append(new String(b, 0, n));
-                }
-                return out.toString();
-            }
-            return "";
-        } catch (IOException ex) {
-            Logger.getLogger(AboutBox.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            try {
-                if (is != null) {
-                    is.close();
-                }
-            } catch (IOException ex) {
-                Logger.getLogger(AboutBox.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        return "";
+    private String getNotNullFile(String f) {
+        String s = AptivatorUtil.getMetaInfFile(f);
+        return (s == null ? "" : s);
     }
+
+   
 }

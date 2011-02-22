@@ -32,6 +32,16 @@ public class Settings {
 
     private Stylesheets stylesheets = new Stylesheets();
 
+    private String appVersion = "Unknown version";
+
+    public String getAppVersion() {
+        return appVersion;
+    }
+
+    public void setAppVersion(String appVersion) {
+        this.appVersion = appVersion;
+    }
+
     public Dimension getAppSize() {
         return appSize;
     }

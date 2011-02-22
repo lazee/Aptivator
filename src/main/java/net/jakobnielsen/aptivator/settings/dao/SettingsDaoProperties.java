@@ -15,6 +15,7 @@
  */
 package net.jakobnielsen.aptivator.settings.dao;
 
+import net.jakobnielsen.aptivator.AptivatorUtil;
 import net.jakobnielsen.aptivator.settings.entities.Settings;
 import org.apache.log4j.Logger;
 
@@ -47,7 +48,11 @@ public class SettingsDaoProperties implements SettingsDao {
 
     private static final String APP_SIZE_HEIGHT = "app.size.height";
 
+    private static final String APP_VERSION = "app.version";
+
     private static final String RECENT_FILES = "recent.files";
+
+    private static final String APP_PROPERTIES_FILE = "aptivator.properties";
 
     private File settingsDir;
 
@@ -95,6 +100,7 @@ public class SettingsDaoProperties implements SettingsDao {
         properties.setProperty(AUTO_REFRESH_INTERVAL, "" + settings.getRefreshInterval());
         properties.setProperty(APP_SIZE_WIDTH, "" + settings.getAppSize().width);
         properties.setProperty(APP_SIZE_HEIGHT, "" + settings.getAppSize().height);
+        properties.setProperty(APP_VERSION, settings.getAppVersion());
         properties.setProperty(RECENT_FILES, createListStr(settings.getRecentFiles().getRecentFiles()));
         return properties;
     }
@@ -114,6 +120,7 @@ public class SettingsDaoProperties implements SettingsDao {
         if (properties.containsKey(RECENT_FILES)) {
             settings.getRecentFiles().setRecentFiles(splitList(properties.getProperty(RECENT_FILES)));
         }
+        settings.setAppVersion(properties.getProperty(APP_VERSION));
         return settings;
     }
 
@@ -160,6 +167,16 @@ public class SettingsDaoProperties implements SettingsDao {
     private Properties getProperties() throws IOException {
         Properties properties = new Properties();
         properties.load(new FileInputStream(getSettingsFile()));
+        Properties staticProperties = AptivatorUtil.getMetaInfProperties(APP_PROPERTIES_FILE);
+        if (staticProperties != null) {
+            if (staticProperties.getProperty(APP_VERSION) != null) {
+                properties.put(APP_VERSION, staticProperties.getProperty(APP_VERSION));
+            } else {
+                log.warn("No app version in properties file");
+            }
+        } else {
+            log.warn("Could not load app properties file");
+        }
         return properties;
     }
 
