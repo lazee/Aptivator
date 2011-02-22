@@ -16,6 +16,11 @@
 
 package net.jakobnielsen.aptivator;
 
+/**
+ * Action constants
+ *
+ * @author <a href="mailto:jakobnielsen@gmail.com">Jakob Vad Nielsen</a>
+ */
 public class AptivatorActions {
 
     public static final String CLEAR_LOG_LIST = "CLEAR_LOG_LIST";

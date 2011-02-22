@@ -20,6 +20,11 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * Menu action
+ *
+ * @author <a href="mailto:jakobnielsen@gmail.com">Jakob Vad Nielsen</a>
+ */
 public class MenuAction extends AbstractAction {
 
     ActionListener listener;
@@ -27,11 +32,6 @@ public class MenuAction extends AbstractAction {
     public MenuAction(ActionListener listener, String text, String id) {
         super(text);
         init(listener, id, null);
-    }
-
-    public MenuAction(ActionListener listener, String text, String id, Integer mnemonic) {
-        super(text);
-        init(listener, id, mnemonic);
     }
 
     private void init(ActionListener listener, String id, Integer mnemonic) {

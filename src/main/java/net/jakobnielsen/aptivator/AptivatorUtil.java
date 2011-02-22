@@ -23,6 +23,11 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Properties;
 
+/**
+ * Utility methods
+ *
+ * @author <a href="mailto:jakobnielsen@gmail.com">Jakob Vad Nielsen</a>
+ */
 public class AptivatorUtil {
 
     private static Logger log = Logger.getLogger(AptivatorUtil.class);
