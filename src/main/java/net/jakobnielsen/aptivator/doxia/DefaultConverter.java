@@ -37,26 +37,14 @@ public class DefaultConverter {
 
     private static final String APT_PARSER = "apt";
 
-    /** Supported input format, i.e. supported Doxia parser */
     public static final String[] SUPPORTED_FROM_FORMAT = {APT_PARSER};
 
     public static final String XHTML_SINK = "xhtml";
 
     public static final String ITEXT_SINK = "itext";
 
-    /** Supported output format, i.e. supported Doxia Sink */
     public static final String[] SUPPORTED_TO_FORMAT = {XHTML_SINK, ITEXT_SINK};
 
-    /**
-     * Returns a logger for this sink. If no logger has been configured, a new SystemStreamLog is returned.
-     *
-     * @return Log
-     */
-    protected Logger getLog() {
-        return log;
-    }
-
-    /** {@inheritDoc} */
     public void convert(PlexusContainer plexus, InputFileWrapper input, Wrapper output, String outFormat)
             throws UnsupportedFormatException, ConverterException {
         if (input == null) {
@@ -74,8 +62,8 @@ public class DefaultConverter {
                 throw new ConverterException("ComponentLookupException: " + e.getMessage(), e);
             }
 
-            if (getLog().isDebugEnabled()) {
-                getLog().debug("Parser used: " + parser.getClass().getName());
+            if (log.isDebugEnabled()) {
+                log.debug("Parser used: " + parser.getClass().getName());
             }
 
             SinkFactory sinkFactory;
@@ -91,8 +79,8 @@ public class DefaultConverter {
             } catch (IOException e) {
                 throw new ConverterException("IOException: " + e.getMessage(), e);
             }
-            if (getLog().isDebugEnabled()) {
-                getLog().debug("Sink used: " + sink.getClass().getName());
+            if (log.isDebugEnabled()) {
+                log.debug("Sink used: " + sink.getClass().getName());
             }
 
             parse(parser, input.getFormat(), new FileReader(input.getFile()), sink);
@@ -101,13 +89,6 @@ public class DefaultConverter {
         }
     }
 
-    /**
-     * @param parser      not null
-     * @param inputFormat not null
-     * @param reader      not null
-     * @param sink        not null
-     * @throws ConverterException if any
-     */
     private void parse(Parser parser, String inputFormat, Reader reader, Sink sink)
             throws ConverterException {
         try {
@@ -123,15 +104,6 @@ public class DefaultConverter {
         }
     }
 
-
-    /**
-     * @param f not null file
-     * @return the detected encoding for f or <code>null</code> if not able to detect it.
-     * @throws IllegalArgumentException      if f is not a file.
-     * @throws UnsupportedOperationException if could not detect the file encoding.
-     * @see {@link XmlStreamReader#getEncoding()} for xml files
-     * @see {@link CharsetDetector#detect()} for text files
-     */
     public static String autoDetectEncoding(File f) {
         if (!f.isFile()) {
             throw new IllegalArgumentException(
