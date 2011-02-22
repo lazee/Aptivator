@@ -135,6 +135,8 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
         aptivatorDocument.createXHtmlPanel();
         buildInterface();
         createFileChooser();
+
+        // Open requested file if any
         if (args.length > 0) {
             File doc = new File(args[0]);
             if (doc.exists() && doc.canRead()) {
@@ -142,9 +144,7 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
             } else {
                 ErrorBox.show(rb.getString("error.file.missing " + doc.getAbsolutePath()), rb.getString("error"));
             }
-        }
-        if (System.getProperty("mrj.version") == null) {
-            // We are on mac
+        } else if (AptivatorUtil.isMacOSX()) {
             Application app = Application.getApplication();
             app.setOpenFileHandler(new OpenFilesHandler() {
 

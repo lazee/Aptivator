@@ -90,5 +90,10 @@ public class AptivatorUtil {
         return p;
     }
 
+    public static boolean isMacOSX() {
+        String osName = System.getProperty("os.name");
+        return osName.startsWith("Mac OS X");
+    }
+
 
 }
