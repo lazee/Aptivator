@@ -61,3 +61,7 @@ Aptivator> mvn clean compile
 +----------+
 Aptivator> mvn exec:java
 +----------+
+
+~~ TO DO
+~~ Register app for apt files in Mac OSX, Linux (Gnome) and Windows
+~~ http://fifesoft.com/rsyntaxtextarea/

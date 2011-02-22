@@ -95,6 +95,8 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
 
     private PlexusContainer plexus;
 
+    private Timer refreshTimer;
+
     public Aptivator() {
         logListModel = new LogListModel();
         WriterAppender writeappender = new WriterAppender(new SimpleLayout(), new LogWriter(logListModel));
@@ -130,6 +132,7 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
                 ErrorBox.show(rb.getString("error.file.missing " + doc.getAbsolutePath()), rb.getString("error"));
             }
         }
+        
     }
 
     private void configureUI() {
@@ -345,10 +348,23 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
 
     private void loadSettings() {
         settings = settingsDAO.getSettings();
+        loadRefreshTimer();
+    }
+
+    private void loadRefreshTimer() {
+        if (refreshTimer != null && refreshTimer.isRunning()) {
+            refreshTimer.stop();
+        }
+        if (settings.getRefreshInterval() != -1) {
+            refreshTimer = new Timer(settings.getRefreshInterval() * 1000, this);
+            refreshTimer.setActionCommand(AptivatorActions.REFRESH);
+            refreshTimer.start();
+        } 
     }
 
     private void storeSettings() {
         settingsDAO.setSettings(settings);
+        loadRefreshTimer();
     }
 
     private Settings getSettings() {
@@ -394,7 +410,7 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
     }
 
     private void reloadDocument() {
-        if (aptivatorDocument != null) {
+        if (aptivatorDocument != null && aptivatorDocument.hasFile()) {
             try {
                 aptivatorDocument.loadAptFile();
                 log.info(rb.getString("info.reload.ok"));
@@ -526,5 +542,7 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
             }
         }
     }
+
+    
 
 }

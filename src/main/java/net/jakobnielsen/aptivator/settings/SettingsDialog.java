@@ -79,7 +79,6 @@ public class SettingsDialog extends JDialog {
 
             public void actionPerformed(ActionEvent e) {
                 save = true;
-
                 setVisible(false);
             }
         };
@@ -107,6 +106,11 @@ public class SettingsDialog extends JDialog {
 
     public Settings getSettings() {
         settings.setStylesheets(Stylesheets.fromListModel(listModel));
+        try {
+            settings.setRefreshInterval(Integer.parseInt(f1.getText()));
+        } catch (NumberFormatException e) {
+            settings.setRefreshInterval(-1);
+        }
         return settings;
     }
 
@@ -135,7 +139,6 @@ public class SettingsDialog extends JDialog {
 
         CellConstraints cc = new CellConstraints();
         panel.add(new JLabel(rb.getString("form.field.interval")), cc.xy(1, 1));
-
         panel.add(f1, cc.xy(3, 1));
 
         return panel;

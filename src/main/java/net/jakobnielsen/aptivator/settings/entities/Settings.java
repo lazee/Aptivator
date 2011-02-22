@@ -25,7 +25,7 @@ import java.io.File;
  */
 public class Settings {
 
-    private int refreshInterval = 60; // in seconds
+    private int refreshInterval = -1; // in seconds. -1 = no refresh
 
     private Dimension appSize = new Dimension(600, 500);
 

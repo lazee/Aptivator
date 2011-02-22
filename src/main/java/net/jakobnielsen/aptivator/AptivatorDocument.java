@@ -102,6 +102,10 @@ public class AptivatorDocument {
         this.file = file;
     }
 
+    public boolean hasFile() {
+        return file != null;
+    }
+    
     public void setStylesheets(Stylesheets stylesheets) {
         stylesheetsModel.removeAllElements();
         stylesheetsModel.addElement(defaultStylesheet);
