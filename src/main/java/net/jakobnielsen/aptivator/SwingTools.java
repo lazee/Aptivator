@@ -17,6 +17,7 @@ package net.jakobnielsen.aptivator;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 
 /**
  * Internal swing helper class.
@@ -49,5 +50,9 @@ public class SwingTools {
         frame.setLocation(
                 (screenSize.width - paneSize.width) / 2,
                 (screenSize.height - paneSize.height) / 2);
+    }
+
+    public static JMenuItem createMenuItem(ActionListener listener, String text, String id) {
+        return new JMenuItem(new MenuAction(listener, text, id));
     }
 }

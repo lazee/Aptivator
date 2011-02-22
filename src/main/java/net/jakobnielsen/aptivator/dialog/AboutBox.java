@@ -23,6 +23,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ResourceBundle;
 
 /**
  * About box
@@ -31,8 +32,8 @@ import java.awt.event.MouseListener;
  */
 public class AboutBox extends JDialog {
 
-    public AboutBox(Frame owner) {
-        super(owner, "Aptivator", true);
+    public AboutBox(Frame owner, ResourceBundle rb) {
+        super(owner, rb.getString("app.title"), true);
 
         KeyListener keyListener = new KeyListener() {
 
@@ -73,14 +74,12 @@ public class AboutBox extends JDialog {
         );
         imageLabel.addKeyListener(keyListener);
 
-        String message = "Simple APT (Almost Plain Text) Viewer by Jakob Vad Nielsen\n";
-
-        message += "\nAptivator homepage : http://aptivator.jakobnielsen.net\n";
-
-        message += "\nJDK: " + System.getProperty("java.version");
-        message += "\nVM: " + System.getProperty("java.vm.name");
-        message += "\nVendor: " + System.getProperty("java.vendor");
-
+        StringBuilder sb = new StringBuilder();
+        sb.append(rb.getString("app.title.long")).append("\n\n");
+        sb.append(rb.getString("app.homepage")).append("\n\n");
+        sb.append("JDK: ").append(System.getProperty("java.version")).append("\n");
+        sb.append("VM: ").append(System.getProperty("java.vm.name")).append("\n");
+        sb.append("Vendor: ").append(System.getProperty("java.vendor")).append("\n");
 
         // Licenses
         JTextArea licensesTxt = new JTextArea(getLicenses());
@@ -105,7 +104,7 @@ public class AboutBox extends JDialog {
         licenseScroll.addKeyListener(keyListener);
 
         // System info
-        JTextArea infoTxt = new JTextArea(message);
+        JTextArea infoTxt = new JTextArea(sb.toString());
         infoTxt.setFont(new Font("Courier", Font.BOLD, 12));
         infoTxt.setForeground(Color.BLACK);
         infoTxt.setBackground(Color.WHITE);
@@ -117,9 +116,9 @@ public class AboutBox extends JDialog {
 
         // Tabs
         JTabbedPane tabs = new JTabbedPane();
-        tabs.addTab("General", null, infoScroll, "");
-        tabs.addTab("License", null, licenseScroll, "");
-        tabs.addTab("Third-party licenses", null, licensesScroll, "");
+        tabs.addTab(rb.getString("menu.general"), null, infoScroll, "");
+        tabs.addTab(rb.getString("menu.license"), null, licenseScroll, "");
+        tabs.addTab(rb.getString("menu.licenses"), null, licensesScroll, "");
         tabs.addKeyListener(keyListener);
         tabs.setTabPlacement(JTabbedPane.BOTTOM);
 

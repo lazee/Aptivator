@@ -34,6 +34,7 @@ import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ResourceBundle;
 
 /**
  * Stylesheet dialog
@@ -48,19 +49,25 @@ public class StylesheetDialog extends JDialog {
 
     private JButton selectButton = new JButton("\u2026");
 
-    private JButton okButton = new JButton("OK");
+    private JButton okButton;
 
-    private JButton cancelButton = new JButton("Cancel");
+    private JButton cancelButton;
 
     private String action = null;
 
     private StyleSheet styleSheet;
 
-    public StylesheetDialog(Frame owner, StyleSheet styleSheet) {
-        super(owner, "Stylesheet", true);
+    private ResourceBundle rb;
 
+    public StylesheetDialog(Frame owner, StyleSheet styleSheet, ResourceBundle rb) {
+        super(owner, rb.getString("text.stylesheet"), true);
+
+        this.rb = rb;
         this.styleSheet = styleSheet;
 
+        okButton = new JButton(rb.getString("text.ok"));
+        cancelButton = new JButton(rb.getString("text.cancel"));
+        
         JPanel mainPanel = buildMainPanel();
 
         selectButton.addActionListener(
@@ -118,7 +125,7 @@ public class StylesheetDialog extends JDialog {
         if (titleField != null && !"".equals(titleField.getText().trim())) {
             return true;
         }
-        ErrorBox.show("You must give the stylesheet a title");
+        ErrorBox.show(rb.getString("error.stylesheet.title"), rb.getString("error"));
         return false;
     }
 
@@ -128,10 +135,10 @@ public class StylesheetDialog extends JDialog {
             if (f.exists()) {
                 return true;
             }
-            ErrorBox.show("The specified file path does not exists!");
+            ErrorBox.show(rb.getString("error.file.missing"),  rb.getString("error"));
             return false;
         }
-        ErrorBox.show("You must set a path to the stylesheet that you want to include.");
+        ErrorBox.show(rb.getString("error.stylesheet.path"), rb.getString("error"));
         return false;
     }
 
@@ -158,9 +165,9 @@ public class StylesheetDialog extends JDialog {
                 "2*(p, 2dlu), p");
         PanelBuilder builder = new PanelBuilder(layout);
         CellConstraints cc = new CellConstraints();
-        builder.add(new JLabel("Title:"), cc.xy(1, 1));
+        builder.add(new JLabel(rb.getString("text.title") + ":"), cc.xy(1, 1));
         builder.add(titleField, cc.xyw(3, 1, 7));
-        builder.add(new JLabel("Location:"), cc.xy(1, 3));
+        builder.add(new JLabel(rb.getString("text.location") + ":"), cc.xy(1, 3));
         builder.add(pathField, cc.xyw(3, 3, 5));
         builder.add(selectButton, cc.xy(9, 3));
         return builder.getPanel();

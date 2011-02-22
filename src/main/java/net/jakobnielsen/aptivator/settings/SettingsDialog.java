@@ -43,6 +43,7 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ResourceBundle;
 
 /**
  * Settings dialog
@@ -61,8 +62,11 @@ public class SettingsDialog extends JDialog {
 
     private Settings settings;
 
-    public SettingsDialog(Frame owner, final Settings settings) {
-        super(owner, "Settings", true);
+    private ResourceBundle rb;
+
+    public SettingsDialog(Frame owner, final Settings settings, ResourceBundle rb) {
+        super(owner, rb.getString("menu.settings"), true);
+        this.rb = rb;
         setMinimumSize(new Dimension(300, 300));
         this.settings = settings;
         getContentPane().setPreferredSize(new Dimension(500, 350));
@@ -70,7 +74,7 @@ public class SettingsDialog extends JDialog {
         getContentPane().add(createPreferences());
         JPanel bottomPanel = new JPanel();
         /*-- Ok button --*/
-        JButton btOK = new JButton("OK");
+        JButton btOK = new JButton(rb.getString("text.ok"));
         ActionListener lst = new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -82,7 +86,7 @@ public class SettingsDialog extends JDialog {
         btOK.addActionListener(lst);
         bottomPanel.add(btOK, BorderLayout.EAST);
         /*-- cancel button --*/
-        JButton btCancel = new JButton("Cancel");
+        JButton btCancel = new JButton(rb.getString("text.cancel"));
         lst = new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -113,8 +117,8 @@ public class SettingsDialog extends JDialog {
     private JComponent createPreferences() {
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.putClientProperty("jgoodies.noContentBorder", Boolean.TRUE);
-        tabbedPane.add("General", buildGeneralPanel());
-        tabbedPane.add("StyleSheets", buildStyleSheetPanel());
+        tabbedPane.add(rb.getString("menu.general"), buildGeneralPanel());
+        tabbedPane.add(rb.getString("menu.stylesheets"), buildStyleSheetPanel());
         return tabbedPane;
     }
 
@@ -130,7 +134,7 @@ public class SettingsDialog extends JDialog {
         panel.setBorder(Borders.DIALOG_BORDER);
 
         CellConstraints cc = new CellConstraints();
-        panel.add(new JLabel("Refresh interval (-1 if no refresh)"), cc.xy(1, 1));
+        panel.add(new JLabel(rb.getString("form.field.interval")), cc.xy(1, 1));
 
         panel.add(f1, cc.xy(3, 1));
 
@@ -146,7 +150,7 @@ public class SettingsDialog extends JDialog {
 
         // Label
         final JLabel mainLabel = new JLabel();
-        mainLabel.setText("Registered stylesheets");
+        mainLabel.setText(rb.getString("form.field.stylesheets"));
         CellConstraints cc = new CellConstraints();
 
         // List
@@ -168,18 +172,18 @@ public class SettingsDialog extends JDialog {
 
         // Buttons
         JButton addButton = new JButton();
-        addButton.setText("Add");
+        addButton.setText(rb.getString("text.add"));
         buttonPanel.add(addButton, cc.xy(1, 1));
         addButton.addActionListener(
                 new ActionListener() {
 
                     public void actionPerformed(ActionEvent e) {
-                        StylesheetDialog sd = new StylesheetDialog(new JFrame(), null);
+                        StylesheetDialog sd = new StylesheetDialog(new JFrame(), null, rb);
                         sd.pack();
                         SwingTools.locateOnScreen(sd);
                         sd.setVisible(true);
 
-                        if ("OK".equals(sd.getAction())) {
+                        if (rb.getString("text.ok").equals(sd.getAction())) {
                             listModel.addElement(sd.getStyleSheet());
                         }
 
@@ -188,7 +192,7 @@ public class SettingsDialog extends JDialog {
         );
 
         JButton editButton = new JButton();
-        editButton.setText("Edit");
+        editButton.setText(rb.getString("text.edit"));
         buttonPanel.add(editButton, cc.xy(1, 3));
         editButton.addActionListener(
                 new ActionListener() {
@@ -197,12 +201,12 @@ public class SettingsDialog extends JDialog {
                         if (stylesheetList.getSelectedIndex() > -1) {
                             int idx = stylesheetList.getSelectedIndex();
                             StyleSheet ss = (StyleSheet) listModel.getElementAt(idx);
-                            StylesheetDialog sd = new StylesheetDialog(new JFrame(), ss);
+                            StylesheetDialog sd = new StylesheetDialog(new JFrame(), ss, rb);
                             sd.pack();
                             SwingTools.locateOnScreen(sd);
                             sd.setVisible(true);
 
-                            if ("OK".equals(sd.getAction())) {
+                            if (rb.getString("text.ok").equals(sd.getAction())) {
                                 listModel.remove(idx);
                                 listModel.add(idx, sd.getStyleSheet());
                             }
@@ -213,7 +217,7 @@ public class SettingsDialog extends JDialog {
         );
 
         JButton removeButton = new JButton();
-        removeButton.setText("Remove");
+        removeButton.setText(rb.getString("text.remove"));
         buttonPanel.add(removeButton, cc.xy(1, 5));
         removeButton.addActionListener(
                 new ActionListener() {

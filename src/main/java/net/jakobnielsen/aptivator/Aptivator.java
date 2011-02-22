@@ -21,6 +21,7 @@ import net.jakobnielsen.aptivator.dialog.AptivatorFileChooser;
 import net.jakobnielsen.aptivator.dialog.ErrorBox;
 import net.jakobnielsen.aptivator.doxia.ConverterException;
 import net.jakobnielsen.aptivator.doxia.UnsupportedFormatException;
+import net.jakobnielsen.aptivator.i18n.CustomClassLoader;
 import net.jakobnielsen.aptivator.plexus.PlexusHelper;
 import net.jakobnielsen.aptivator.settings.SettingsDialog;
 import net.jakobnielsen.aptivator.settings.dao.SettingsDao;
@@ -43,16 +44,23 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
+
+import static net.jakobnielsen.aptivator.AptivatorActions.*;
 
 /**
- *  Aptivator application
+ * Aptivator application
  *
- *  @author <a href="mailto:jakobnielsen@gmail.com">Jakob Vad Nielsen</a>
+ * @author <a href="mailto:jakobnielsen@gmail.com">Jakob Vad Nielsen</a>
  */
 public class Aptivator extends TransferHandler implements ComponentListener, ActionListener {
 
@@ -84,10 +92,10 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
 
     private SettingsDao settingsDAO;
 
-    /** Plexus container */
+    private ResourceBundle rb;
+
     private PlexusContainer plexus;
 
-    /** Constructor method */
     public Aptivator() {
         logListModel = new LogListModel();
         WriterAppender writeappender = new WriterAppender(new SimpleLayout(), new LogWriter(logListModel));
@@ -96,18 +104,13 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
         Logger.getRootLogger().addAppender(writeappender);
         Logger.getRootLogger().setLevel(Level.INFO);
         settingsDAO = new SettingsDaoProperties();
+        rb = ResourceBundle.getBundle("/META-INF/i18n/messages", Locale.US, new CustomClassLoader());
     }
 
-    /**
-     * Set application arguments
-     *
-     * @param args Array of arguments given to application at startup
-     */
     public void setArgs(String[] args) {
         this.args = args;
     }
 
-    /** Start the Aptivator application */
     public void run() {
         try {
             plexus = PlexusHelper.startPlexusContainer();
@@ -116,7 +119,7 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
         }
         loadSettings();
         configureUI();
-        aptivatorDocument = new AptivatorDocument(plexus);
+        aptivatorDocument = new AptivatorDocument(plexus, rb);
         aptivatorDocument.createXHtmlPanel();
         buildInterface();
         createFileChooser();
@@ -130,18 +133,16 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
         }
     }
 
-    /** Configure the user interface */
     private void configureUI() {
         UIManager.put("Application.useSystemFontSettings", Boolean.TRUE);
         try {
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
         } catch (Exception e) {
             e.printStackTrace();
-            System.err.println("Can't set look & feel:" + e);
+            log.error(rb.getString("error.look.and.feel") + e);
         }
     }
 
-    /** Build the user interface */
     private void buildInterface() {
         /* Content contentPanel */
         contentPanel = new JPanel(new BorderLayout());
@@ -167,7 +168,7 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
         jframe.setMinimumSize(new Dimension(100, 100));
         jframe.setTransferHandler(this);
         SwingTools.locateOnScreen(jframe);
-        jframe.setTitle("Aptivator");
+        jframe.setTitle(rb.getString("app.title"));
         jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         jframe.setVisible(true);
@@ -177,44 +178,70 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
     }
 
     public void actionPerformed(ActionEvent e) {
-        if ("Refresh".equals(e.getActionCommand())) {
+        if (REFRESH.equals(e.getActionCommand())) {
             reloadDocument();
-        } else if ("Export".equals(e.getActionCommand())) {
+        } else if (EXPORT.equals(e.getActionCommand())) {
             exportDocument();
-        } else if ("ViewBrowser".equals(e.getActionCommand())) {
+        } else if (VIEW_BROWSER.equals(e.getActionCommand())) {
             try {
                 aptivatorDocument.viewInBrowser();
             } catch (ConverterException e1) {
-                ErrorBox.show("Could not view document in external browser");
+                ErrorBox.show(rb.getString("error.external.browser"), rb.getString("error"));
             }
+        } else if (SETTINGS.equals(e.getActionCommand())) {
+            SettingsDialog settingsDialog = new SettingsDialog(new JFrame(), getSettings(), rb);
+            settingsDialog.pack();
+            SwingTools.locateOnScreen(settingsDialog);
+            settingsDialog.setVisible(true);
+
+            if (settingsDialog.isSave()) {
+                settings = settingsDialog.getSettings();
+                storeSettings();
+                if (aptivatorDocument != null) {
+                    aptivatorDocument.setStylesheets(settings.getStylesheets());
+                }
+            }
+        } else if (CLEAR_RECENT_LIST.equals(e.getActionCommand())) {
+            settings.clearRecentFiles();
+            storeSettings();
+            updateRecentMenu();
+        } else if (CLEAR_LOG_LIST.equals(e.getActionCommand())) {
+            logListModel.clear();
+        } else if (OPEN_FILE.equals(e.getActionCommand())) {
+            JFileChooser fileChooser = getFileChooser();
+            fileChooser.showOpenDialog(new JFrame());
+            if (fileChooser.getSelectedFile() != null) {
+                loadDocument(fileChooser.getSelectedFile());
+            }
+        } else if (ABOUT.equals(e.getActionCommand())) {
+            AboutBox aboutBox = new AboutBox(new JFrame(), rb);
+            aboutBox.pack();
+            SwingTools.locateOnScreen(aboutBox);
+            aboutBox.setVisible(true);
+        } else if (QUIT.equals(e.getActionCommand())) {
+            System.exit(1);
+        } else {
+            log.error(rb.getString("error.unhandled.action") + ": " +  e.getActionCommand());
         }
     }
 
     private void createRecentMenu() {
-        recentMenu = new JMenu("Open Recent");
+        recentMenu = new JMenu(rb.getString("menu.open.recent"));
         if (settings.getRecentFiles().getRecentFiles().size() > 0) {
             for (File f : settings.getRecentFiles().getRecentFiles()) {
+
                 JMenuItem item = new JMenuItem(f.getAbsolutePath());
                 ActionListener lst = new ActionListener() {
-
                     public void actionPerformed(ActionEvent e) {
                         loadDocument(new File(e.getActionCommand()));
                     }
-
                 };
+
                 item.addActionListener(lst);
                 recentMenu.add(item);
             }
             recentMenu.addSeparator();
-            JMenuItem item = new JMenuItem("Clear list");
-            ActionListener lst = new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    settings.clearRecentFiles();
-                    storeSettings();
-                    updateRecentMenu();
-                }
-            };
-            item.addActionListener(lst);
+            JMenuItem item = SwingTools.createMenuItem(this, rb.getString("menu.clear.list"), CLEAR_RECENT_LIST);
             recentMenu.add(item);
         } else {
             recentMenu.setEnabled(false);
@@ -231,27 +258,36 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
         JList ml = new JList(logListModel);
         ml.setBackground(Color.DARK_GRAY);
         ml.setForeground(Color.WHITE);
+
+        createPopupMenu(ml);
+
         return ml;
+    }
+
+    public void createPopupMenu(JList list) {
+        JMenuItem menuItem;
+
+        //Create the popup menu.
+        JPopupMenu popup = new JPopupMenu();
+
+        menuItem = SwingTools.createMenuItem(this, rb.getString("menu.clear.list"), CLEAR_LOG_LIST);
+        popup.add(menuItem);
+
+        //Add listener to the text area so the popup menu can come up.
+        MouseListener popupListener = new PopupListener(popup);
+        list.addMouseListener(popupListener);
+        list.add(popup);
     }
 
     private JMenuBar buildMenuBar() {
         JMenuBar menuBar = new JMenuBar();
-        fileMenu = new JMenu("File");
+        fileMenu = new JMenu(rb.getString("menu.file"));
 
         /* Open */
-        JMenuItem item = new JMenuItem("Open File");
+
+        JMenuItem item = SwingTools.createMenuItem(this, rb.getString("menu.open.file"), OPEN_FILE);
         item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O,
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
-        ActionListener lst = new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                JFileChooser fileChooser = getFileChooser();
-                fileChooser.showOpenDialog(new JFrame());
-                if (fileChooser.getSelectedFile() != null) {
-                    loadDocument(fileChooser.getSelectedFile());
-                }
-            }
-        };
-        item.addActionListener(lst);
         fileMenu.add(item, 0);
 
         /* Open recent */
@@ -260,97 +296,47 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
 
 
         /* Settings */
-        item = new JMenuItem("Settings");
+        item = SwingTools.createMenuItem(this, rb.getString("menu.settings"), SETTINGS);
 
         item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
-        lst = new ActionListener() {
 
-            public void actionPerformed(ActionEvent e) {
-                SettingsDialog settingsDialog = new SettingsDialog(new JFrame(), getSettings());
-                settingsDialog.pack();
-                SwingTools.locateOnScreen(settingsDialog);
-                settingsDialog.setVisible(true);
-
-                if (settingsDialog.isSave()) {
-                    settings = settingsDialog.getSettings();
-                    storeSettings();
-                    if (aptivatorDocument != null) {
-                        aptivatorDocument.setStylesheets(settings.getStylesheets());
-                    }
-                }
-
-            }
-        };
-        item.addActionListener(lst);
         fileMenu.add(item, 2);
 
         /* Separator */
         fileMenu.addSeparator();
 
         /* Quit */
-        item = new JMenuItem("Quit Aptivator");
+        item = SwingTools.createMenuItem(this, rb.getString("menu.quit"), QUIT);
         item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q,
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
-        lst = new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                System.exit(1);
-            }
-        };
-        item.addActionListener(lst);
         fileMenu.add(item, 4);
 
         menuBar.add(fileMenu);
 
         /* Document */
-        documentMenu = new JMenu("Document");
+        documentMenu = new JMenu(rb.getString("menu.document"));
         documentMenu.setEnabled(false);
 
         /* Reload */
-        item = new JMenuItem("Reload");
+        item = SwingTools.createMenuItem(this, rb.getString("menu.reload"), REFRESH);
         item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R,
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
-
-        lst = new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                reloadDocument();
-            }
-        };
-
-        item.addActionListener(lst);
         documentMenu.add(item);
 
-        item = new JMenuItem("Export to PDF");
-        lst = new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                exportDocument();
-            }
-        };
-
-        item.addActionListener(lst);
+        /* Export to PDF */
+        item = SwingTools.createMenuItem(this, rb.getString("menu.export.to.pdf"), EXPORT);
         documentMenu.add(item);
-
         menuBar.add(documentMenu);
 
         /* Help */
-        JMenu menu = new JMenu("Help");
+        JMenu menu = new JMenu(rb.getString("menu.help"));
 
         //if (System.getProperty("mrj.version") == null) {
-        item = new JMenuItem("About Aptivator");
+        item = SwingTools.createMenuItem(this, rb.getString("menu.about"), ABOUT);
         item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A,
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
-        lst = new ActionListener() {
 
-            public void actionPerformed(ActionEvent e) {
-                AboutBox aboutBox = new AboutBox(new JFrame());
-                aboutBox.pack();
-                SwingTools.locateOnScreen(aboutBox);
-                aboutBox.setVisible(true);
-
-            }
-        };
-        item.addActionListener(lst);
         menu.add(item);
 
         //} else {
@@ -361,7 +347,6 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
         return menuBar;
     }
 
-    /** Settings ** */
     private void loadSettings() {
         settings = settingsDAO.getSettings();
     }
@@ -374,16 +359,10 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
         return settings;
     }
 
-    /** Create the file chooser dialog */
     private void createFileChooser() {
         fileChooser = new AptivatorFileChooser("apt");
     }
 
-    /**
-     * Get the file chooser variable
-     *
-     * @return File chooser component ready for use.
-     */
     private JFileChooser getFileChooser() {
         return fileChooser;
     }
@@ -396,6 +375,9 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
         return support.isDataFlavorSupported(DataFlavor.javaFileListFlavor);
     }
 
+    /*
+     * Enables support for dragging an APT file into the application from any supported OS.
+     */
     @Override
     public boolean importData(TransferSupport support) {
         if (!canImport(support)) {
@@ -403,9 +385,9 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
         }
         Transferable t = support.getTransferable();
         try {
-            List<File> data = (List<File>) t.getTransferData(DataFlavor.javaFileListFlavor);
+            List data = (List) t.getTransferData(DataFlavor.javaFileListFlavor);
             if (data != null && data.size() > 0) {
-                loadDocument(data.get(0));
+                loadDocument((File) data.get(0));
             }
         } catch (UnsupportedFlavorException e) {
             e.printStackTrace();
@@ -419,15 +401,15 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
         if (aptivatorDocument != null) {
             try {
                 aptivatorDocument.loadAptFile();
-                log.info("Reloaded document successfully.");
+                log.info(rb.getString("info.reload.ok"));
             } catch (UnsupportedEncodingException ex) {
-                log.error("Could not open the chosen file due to encoding problems");
+                log.error(rb.getString("error.encoding.problems"));
             } catch (FileNotFoundException ex) {
-                log.error("The chosen file does not exists");
+                log.error(rb.getString("error.file.missing"));
             } catch (UnsupportedFormatException ex) {
-                log.error("The chosen file is not a valid APT file");
+                log.error(rb.getString("error.invalid.apt"));
             } catch (ConverterException ex) {
-                log.error("Parser exception: " + ex.getMessage());
+                log.error(rb.getString("error.parser.exception") + ": " + ex.getMessage());
             }
         }
     }
@@ -449,15 +431,15 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
                     settings.addRecentFile(f);
                     storeSettings();
                     updateRecentMenu();
-                    log.info("Loaded : " + f.getAbsolutePath());
+                    log.info(rb.getString("info.load.ok") + " : " + f.getAbsolutePath());
                 } catch (UnsupportedEncodingException ex) {
-                    log.error("Could not open the chosen file due to encoding problems");
+                    log.error(rb.getString("error.encoding.problems"));
                 } catch (FileNotFoundException ex) {
-                    log.error("The chosen file does not exists");
+                    log.error(rb.getString("error.file.missing"));
                 } catch (UnsupportedFormatException ex) {
-                    log.error("The chosen file is not a valid APT file");
+                    log.error(rb.getString("error.invalid.apt"));
                 } catch (ConverterException ex) {
-                    log.error("Parser exception: " + ex.getMessage());
+                    log.error(rb.getString("error.parser.exception") +  ": " + ex.getMessage());
                 }
             }
         }
@@ -467,7 +449,7 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
     private void exportDocument() {
 
         JFileChooser fileChooser = new AptivatorExportChooser();
-        fileChooser.setDialogTitle("Export to PDF");
+        fileChooser.setDialogTitle(rb.getString("menu.export.to.pdf"));
         fileChooser.setCurrentDirectory(activeExportDir);
 
         fileChooser.showSaveDialog(new JFrame());
@@ -482,10 +464,10 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
 
             if (file.exists()) {
                 proceed = false;
-                Object[] options = {"No", "Yes"};
+                Object[] options = {rb.getString("text.no"), rb.getString("text.yes")};
                 int n = JOptionPane.showOptionDialog(jframe,
                         file.getAbsolutePath(),
-                        "Override file",
+                        rb.getString("question.override.file"),
                         JOptionPane.YES_NO_CANCEL_OPTION,
                         JOptionPane.QUESTION_MESSAGE,
                         null,
@@ -499,9 +481,9 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
             if (proceed) {
                 activeExportDir = fileChooser.getCurrentDirectory();
                 if (aptivatorDocument.storeAsPdf(file)) {
-                    log.info("PDF successfully stored to " + file.getAbsolutePath());
+                    log.info(rb.getString("info.pdf.stored.in") + file.getAbsolutePath());
                 } else {
-                    ErrorBox.show("Could not store file as PDF!");
+                    ErrorBox.show(rb.getString("error.storing.pdf"), rb.getString("error"));
                 }
             }
         }
@@ -521,5 +503,28 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
     public void componentHidden(ComponentEvent e) {
     }
 
+    class PopupListener extends MouseAdapter {
+
+        JPopupMenu popup;
+
+        PopupListener(JPopupMenu popupMenu) {
+            popup = popupMenu;
+        }
+
+        public void mousePressed(MouseEvent e) {
+            maybeShowPopup(e);
+        }
+
+        public void mouseReleased(MouseEvent e) {
+            maybeShowPopup(e);
+        }
+
+        private void maybeShowPopup(MouseEvent e) {
+            if (e.isPopupTrigger()) {
+                popup.show(e.getComponent(),
+                        e.getX(), e.getY());
+            }
+        }
+    }
 
 }

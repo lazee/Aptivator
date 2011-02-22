@@ -36,14 +36,8 @@ import org.xhtmlrenderer.swing.BasicPanel;
 import org.xhtmlrenderer.swing.FSMouseListener;
 import org.xhtmlrenderer.swing.LinkListener;
 
-import javax.swing.Box;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JToolBar;
-import java.awt.BorderLayout;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedWriter;
@@ -58,6 +52,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.List;
+import java.util.ResourceBundle;
 
 /**
  * Aptivator document viewer
@@ -84,11 +79,14 @@ public class AptivatorDocument {
 
     private static Logger log = Logger.getLogger(AptivatorDocument.class);
 
-    public AptivatorDocument(PlexusContainer plexus) {
+    private ResourceBundle rb;
+
+    public AptivatorDocument(PlexusContainer plexus, ResourceBundle rb) {
         this.plexus = plexus;
+        this.rb = rb;
         this.styler = new Styler();
         defaultStylesheet = new StyleSheet();
-        defaultStylesheet.setTitle("Default stylesheet");
+        defaultStylesheet.setTitle(this.rb.getString("menu.default.stylesheet"));
     }
 
     protected void setFile(File file) {
@@ -124,14 +122,14 @@ public class AptivatorDocument {
             public void linkClicked(BasicPanel panel, String uri) {
                 if (uri.startsWith("http://")) {
                     if (!DesktopUtil.openUrl(uri)) {
-                        ErrorBox.show("Could not open url in external browser");
+                        ErrorBox.show(rb.getString("error.url.external.browser"), rb.getString("error"));
                     }
                 } else if (uri.startsWith("mailto:")) {
                     if (!DesktopUtil.openMail(uri)) {
-                        ErrorBox.show("Could not open default mail program");
+                        ErrorBox.show(rb.getString("error.open.mail"), rb.getString("error"));
                     }
                 } else {
-                    InfoBox.show("Internal links not supported yet: " + uri);
+                    InfoBox.show(rb.getString("error.internal.links") + ": " + uri, rb.getString("error"));
                 }
             }
         });
@@ -150,20 +148,25 @@ public class AptivatorDocument {
     }
 
     private JComponent buildToolbar(ActionListener listener) {
-        JToolBar toolBar = new JToolBar("Still draggable");
+        JToolBar toolBar = new JToolBar("");
         toolBar.setFloatable(false);
         toolBar.setRollover(true);
 
-        JButton refreshButton = makeButton(AptivatorUtil.REFRESH_ICON, "Refresh", "Refresh document", "Refresh", true);
+        JButton refreshButton =
+                makeButton(AptivatorUtil.REFRESH_ICON, AptivatorActions.REFRESH, rb.getString("menu.reload"),
+                        rb.getString("menu.reload"), true);
         refreshButton.addActionListener(listener);
         toolBar.add(refreshButton);
 
-        JButton exportButton = makeButton(AptivatorUtil.EXPORT_ICON, "Export", "Export to PDF", "Export to PDF", true);
+        JButton exportButton =
+                makeButton(AptivatorUtil.EXPORT_ICON, AptivatorActions.EXPORT, rb.getString("menu.export.to.pdf"),
+                        rb.getString("menu.export.to.pdf"), true);
         exportButton.addActionListener(listener);
         toolBar.add(exportButton);
 
         JButton browseButton =
-                makeButton(AptivatorUtil.BROWSER_ICON, "ViewBrowser", "View in external browser", "View in browser",
+                makeButton(AptivatorUtil.BROWSER_ICON, AptivatorActions.VIEW_BROWSER, rb.getString("menu.view.browser"),
+                        rb.getString("menu.view.browser"),
                         true);
         browseButton.addActionListener(listener);
         toolBar.add(browseButton);
@@ -196,21 +199,16 @@ public class AptivatorDocument {
                     }
                 }
             }
-
-
         });
-
-
         toolBar.add(stylesheetCombo);
-
         return toolBar;
     }
 
     protected JButton makeButton(String imageName,
-            String actionCommand,
-            String toolTipText,
-            String altText,
-            boolean active) {
+                                 String actionCommand,
+                                 String toolTipText,
+                                 String altText,
+                                 boolean active) {
         JButton button = new JButton();
         button.setActionCommand(actionCommand);
         button.setToolTipText(toolTipText);
@@ -231,12 +229,11 @@ public class AptivatorDocument {
     public boolean loadAptFile()
             throws UnsupportedEncodingException, FileNotFoundException, UnsupportedFormatException, ConverterException {
 
-
         if (file == null) {
-            ErrorBox.show("Given file is null!");
+            ErrorBox.show(rb.getString("error.file.null"), rb.getString("error"));
             return false;
         } else if (!file.exists()) {
-            ErrorBox.show("The given file doesn't exist anymore: " + file.getAbsolutePath());
+            ErrorBox.show(rb.getString("error.file.missing") + ": " + file.getAbsolutePath(), rb.getString("error"));
         }
 
         try {
@@ -283,7 +280,7 @@ public class AptivatorDocument {
     public boolean storeAsPdf(File outputFile) {
 
         if (outputFile == null) {
-            ErrorBox.show("Given output file is null");
+            ErrorBox.show(rb.getString("error.file.null"), rb.getString("error"));
             return false;
         }
         OutputStream os = null;
@@ -313,7 +310,7 @@ public class AptivatorDocument {
 
     public boolean viewInBrowser() throws ConverterException {
         if (file == null || !file.exists()) {
-            ErrorBox.show("Given file is null");
+            ErrorBox.show(rb.getString("error.file.null"), rb.getString("error"));
             return false;
         }
         try {
@@ -335,7 +332,7 @@ public class AptivatorDocument {
                 }
                 if (out != null) {
                     Writer output = null;
-                    File outputFile = new File("/tmp/foo.html");
+                    File outputFile = new File("/tmp/foo.html"); // FIXME What the f***?
                     try {
                         output = new BufferedWriter(new FileWriter(outputFile));
                         output.write(out);

@@ -25,8 +25,8 @@ import javax.swing.JOptionPane;
  */
 public class ErrorBox {
 
-    public static void show(String message) {
-        JOptionPane.showMessageDialog(new JFrame(), message, "Dialog",
+    public static void show(String message, String title) {
+        JOptionPane.showMessageDialog(new JFrame(), message, title,
                 JOptionPane.ERROR_MESSAGE);
     }
 }

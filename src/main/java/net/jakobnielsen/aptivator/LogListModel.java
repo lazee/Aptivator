@@ -46,6 +46,12 @@ public class LogListModel extends AbstractListModel {
         return delegate.get(index);
     }
 
+    public void clear() {
+        int old_size = delegate.size();
+        delegate.clear();
+        fireIntervalRemoved(this, 0, old_size);
+    }
+
     public void addElement(String element) {
         int index = delegate.size();
         delegate.add(element);

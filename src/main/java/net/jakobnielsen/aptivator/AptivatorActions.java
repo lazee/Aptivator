@@ -13,20 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.jakobnielsen.aptivator.dialog;
 
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
+package net.jakobnielsen.aptivator;
 
-/**
- * Info box
- *
- * @author <a href="mailto:jakobnielsen@gmail.com">Jakob Vad Nielsen</a>
- */
-public class InfoBox {
+public class AptivatorActions {
 
-       public static void show(String message, String title) {
-        JOptionPane.showMessageDialog(new JFrame(), message, title,
-                JOptionPane.INFORMATION_MESSAGE);
-    }
+    public static final String CLEAR_LOG_LIST = "CLEAR_LOG_LIST";
+
+    public static final String OPEN_FILE = "OPEN_FILE";
+
+    public static final String REFRESH = "REFRESH";
+
+    public static final String EXPORT = "EXPORT";
+
+    public static final String VIEW_BROWSER = "VIEW_BROWSER";
+
+    public static final String SETTINGS = "SETTINGS";
+
+    public static final String CLEAR_RECENT_LIST = "CLEAR_RECENT_LIST";
+
+    public static final String QUIT = "QUIT";
+
+    public static final String ABOUT = "ABOUT";
+
 }

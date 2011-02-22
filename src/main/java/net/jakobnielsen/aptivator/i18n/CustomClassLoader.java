@@ -13,20 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.jakobnielsen.aptivator.dialog;
 
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
+package net.jakobnielsen.aptivator.i18n;
 
-/**
- * Info box
- *
- * @author <a href="mailto:jakobnielsen@gmail.com">Jakob Vad Nielsen</a>
- */
-public class InfoBox {
+import java.net.URL;
 
-       public static void show(String message, String title) {
-        JOptionPane.showMessageDialog(new JFrame(), message, title,
-                JOptionPane.INFORMATION_MESSAGE);
+public class CustomClassLoader extends ClassLoader {
+
+    @Override
+    protected URL findResource(String name) {
+        URL url = CustomClassLoader.class.getResource(name);
+        if (url != null) {
+            return url;
+        }
+        return super.findResource(name);
     }
 }
