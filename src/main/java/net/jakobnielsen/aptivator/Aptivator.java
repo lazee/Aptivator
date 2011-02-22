@@ -15,6 +15,9 @@
  */
 package net.jakobnielsen.aptivator;
 
+import com.apple.eawt.AppEvent;
+import com.apple.eawt.Application;
+import com.apple.eawt.OpenFilesHandler;
 import net.jakobnielsen.aptivator.dialog.AboutBox;
 import net.jakobnielsen.aptivator.dialog.AptivatorExportChooser;
 import net.jakobnielsen.aptivator.dialog.AptivatorFileChooser;
@@ -54,7 +57,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import static net.jakobnielsen.aptivator.AptivatorActions.*;
+import static net.jakobnielsen.aptivator.AptivatorActions.ABOUT;
+import static net.jakobnielsen.aptivator.AptivatorActions.CLEAR_LOG_LIST;
+import static net.jakobnielsen.aptivator.AptivatorActions.CLEAR_RECENT_LIST;
+import static net.jakobnielsen.aptivator.AptivatorActions.EXPORT;
+import static net.jakobnielsen.aptivator.AptivatorActions.OPEN_FILE;
+import static net.jakobnielsen.aptivator.AptivatorActions.QUIT;
+import static net.jakobnielsen.aptivator.AptivatorActions.REFRESH;
+import static net.jakobnielsen.aptivator.AptivatorActions.SETTINGS;
+import static net.jakobnielsen.aptivator.AptivatorActions.VIEW_BROWSER;
 
 /**
  * Aptivator application
@@ -132,7 +143,20 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
                 ErrorBox.show(rb.getString("error.file.missing " + doc.getAbsolutePath()), rb.getString("error"));
             }
         }
-        
+        if (System.getProperty("mrj.version") == null) {
+            // We are on mac
+            Application app = Application.getApplication();
+            app.setOpenFileHandler(new OpenFilesHandler() {
+
+                @Override
+                public void openFiles(AppEvent.OpenFilesEvent openFilesEvent) {
+                    List<File> fileList = openFilesEvent.getFiles();
+                    if (fileList != null && fileList.size() > 0) {
+                        loadDocument(fileList.get(0));
+                    }
+                }
+            });
+        }
     }
 
     private void configureUI() {
@@ -222,7 +246,7 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
         } else if (QUIT.equals(e.getActionCommand())) {
             System.exit(1);
         } else {
-            log.error(rb.getString("error.unhandled.action") + ": " +  e.getActionCommand());
+            log.error(rb.getString("error.unhandled.action") + ": " + e.getActionCommand());
         }
     }
 
@@ -333,7 +357,7 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
         /* View in browser */
         item = SwingTools.createMenuItem(this, rb.getString("menu.view.browser"), VIEW_BROWSER);
         documentMenu.add(item);
-        
+
 
         /* Help */
         JMenu menu = new JMenu(rb.getString("menu.help"));
@@ -359,7 +383,7 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
             refreshTimer = new Timer(settings.getRefreshInterval() * 1000, this);
             refreshTimer.setActionCommand(AptivatorActions.REFRESH);
             refreshTimer.start();
-        } 
+        }
     }
 
     private void storeSettings() {
@@ -543,6 +567,5 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
         }
     }
 
-    
 
 }
