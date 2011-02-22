@@ -32,7 +32,7 @@ import java.util.ResourceBundle;
  */
 public class AboutBox extends JDialog {
 
-    public AboutBox(Frame owner, ResourceBundle rb) {
+    public AboutBox(Frame owner, ResourceBundle rb, String version) {
         super(owner, rb.getString("app.title"), true);
 
         KeyListener keyListener = new KeyListener() {
@@ -76,6 +76,7 @@ public class AboutBox extends JDialog {
 
         StringBuilder sb = new StringBuilder();
         sb.append(rb.getString("app.title.long")).append("\n\n");
+        sb.append(rb.getString("app.version")).append(": ").append(version).append("\n\n");
         sb.append(rb.getString("app.homepage")).append("\n\n");
         sb.append("JDK: ").append(System.getProperty("java.version")).append("\n");
         sb.append("VM: ").append(System.getProperty("java.vm.name")).append("\n");

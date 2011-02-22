@@ -212,7 +212,7 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
                 loadDocument(fileChooser.getSelectedFile());
             }
         } else if (ABOUT.equals(e.getActionCommand())) {
-            AboutBox aboutBox = new AboutBox(new JFrame(), rb);
+            AboutBox aboutBox = new AboutBox(new JFrame(), rb, settings.getAppVersion());
             aboutBox.pack();
             SwingTools.locateOnScreen(aboutBox);
             aboutBox.setVisible(true);
