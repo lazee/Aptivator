@@ -26,6 +26,10 @@ import net.jakobnielsen.aptivator.settings.SettingsDialog;
 import net.jakobnielsen.aptivator.settings.dao.SettingsDao;
 import net.jakobnielsen.aptivator.settings.dao.SettingsDaoProperties;
 import net.jakobnielsen.aptivator.settings.entities.Settings;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.apache.log4j.SimpleLayout;
+import org.apache.log4j.WriterAppender;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.PlexusContainerException;
 
@@ -45,7 +49,14 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
+/**
+ *  Aptivator application
+ *
+ *  @author <a href="mailto:jakobnielsen@gmail.com">Jakob Vad Nielsen</a>
+ */
 public class Aptivator extends TransferHandler implements ComponentListener, ActionListener {
+
+    private static Logger log = Logger.getLogger(Aptivator.class);
 
     private AptivatorFileChooser fileChooser;
 
@@ -61,8 +72,6 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
 
     private JMenu recentMenu;
 
-    private StatusBar sb;
-
     private JPanel contentPanel;
 
     private JMenu documentMenu;
@@ -71,11 +80,22 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
 
     private File activeExportDir = new File("");
 
+    private LogListModel logListModel;
+
+    private SettingsDao settingsDAO;
+
     /** Plexus container */
     private PlexusContainer plexus;
 
     /** Constructor method */
     public Aptivator() {
+        logListModel = new LogListModel();
+        WriterAppender writeappender = new WriterAppender(new SimpleLayout(), new LogWriter(logListModel));
+        writeappender.setName("A1");
+        writeappender.setImmediateFlush(true);
+        Logger.getRootLogger().addAppender(writeappender);
+        Logger.getRootLogger().setLevel(Level.INFO);
+        settingsDAO = new SettingsDaoProperties();
     }
 
     /**
@@ -112,12 +132,8 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
 
     /** Configure the user interface */
     private void configureUI() {
-
         UIManager.put("Application.useSystemFontSettings", Boolean.TRUE);
-
-
         try {
-            //UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
         } catch (Exception e) {
             e.printStackTrace();
@@ -127,20 +143,25 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
 
     /** Build the user interface */
     private void buildInterface() {
-
         /* Content contentPanel */
         contentPanel = new JPanel(new BorderLayout());
 
-        /* Main panel */
-        JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.add(contentPanel);
-        mainPanel.add(buildStatusBar(), BorderLayout.SOUTH);
+        /* Log panel */
+        JList logList = buildLogMonitorList();
+
+
+        /* Split panel */
+        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+        splitPane.setResizeWeight(0.8);
+        splitPane.setOneTouchExpandable(true);
+        splitPane.setTopComponent(contentPanel);
+        splitPane.setBottomComponent(new JScrollPane(logList));
 
         /* Main frame */
         jframe = new JFrame();
         jframe.setJMenuBar(buildMenuBar());
         jframe.addComponentListener(this);
-        jframe.setContentPane(mainPanel);
+        jframe.setContentPane(splitPane);
 
         jframe.setSize(getSettings().getAppSize());
         jframe.setMinimumSize(new Dimension(100, 100));
@@ -148,13 +169,11 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
         SwingTools.locateOnScreen(jframe);
         jframe.setTitle("Aptivator");
         jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        jframe.setVisible(true);
-    }
 
-    private JComponent buildStatusBar() {
-        sb = new StatusBar();
-        sb.setTextWhenEmpty("Aptivator " + settings.getAppVersion());
-        return sb;
+        jframe.setVisible(true);
+
+        // Setting size of logPanel
+        splitPane.setDividerLocation(0.8);
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -173,7 +192,6 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
 
     private void createRecentMenu() {
         recentMenu = new JMenu("Open Recent");
-
         if (settings.getRecentFiles().getRecentFiles().size() > 0) {
             for (File f : settings.getRecentFiles().getRecentFiles()) {
                 JMenuItem item = new JMenuItem(f.getAbsolutePath());
@@ -187,25 +205,20 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
                 item.addActionListener(lst);
                 recentMenu.add(item);
             }
-
             recentMenu.addSeparator();
-
             JMenuItem item = new JMenuItem("Clear list");
             ActionListener lst = new ActionListener() {
-
                 public void actionPerformed(ActionEvent e) {
                     settings.clearRecentFiles();
                     storeSettings();
                     updateRecentMenu();
                 }
-
             };
             item.addActionListener(lst);
             recentMenu.add(item);
         } else {
             recentMenu.setEnabled(false);
         }
-
     }
 
     private void updateRecentMenu() {
@@ -214,10 +227,15 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
         fileMenu.add(recentMenu, 1);
     }
 
+    private JList buildLogMonitorList() {
+        JList ml = new JList(logListModel);
+        ml.setBackground(Color.DARK_GRAY);
+        ml.setForeground(Color.WHITE);
+        return ml;
+    }
+
     private JMenuBar buildMenuBar() {
-
         JMenuBar menuBar = new JMenuBar();
-
         fileMenu = new JMenu("File");
 
         /* Open */
@@ -225,7 +243,6 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
         item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O,
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
         ActionListener lst = new ActionListener() {
-
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fileChooser = getFileChooser();
                 fileChooser.showOpenDialog(new JFrame());
@@ -346,13 +363,11 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
 
     /** Settings ** */
     private void loadSettings() {
-        SettingsDao dao = new SettingsDaoProperties();
-        settings = dao.getSettings();
+        settings = settingsDAO.getSettings();
     }
 
     private void storeSettings() {
-        SettingsDao dao = new SettingsDaoProperties();
-        dao.setSettings(settings);
+        settingsDAO.setSettings(settings);
     }
 
     private Settings getSettings() {
@@ -404,21 +419,20 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
         if (aptivatorDocument != null) {
             try {
                 aptivatorDocument.loadAptFile();
+                log.info("Reloaded document successfully.");
             } catch (UnsupportedEncodingException ex) {
-                sb.setText("Could not open the chosen file due to encoding problems");
+                log.error("Could not open the chosen file due to encoding problems");
             } catch (FileNotFoundException ex) {
-                sb.setText("The chosen file does not exists");
+                log.error("The chosen file does not exists");
             } catch (UnsupportedFormatException ex) {
-                sb.setText("The chosen file is not a valid APT file");
+                log.error("The chosen file is not a valid APT file");
             } catch (ConverterException ex) {
-                sb.setText("Parser exception: " + ex.getMessage());
+                log.error("Parser exception: " + ex.getMessage());
             }
         }
     }
 
     private void loadDocument(final File f) {
-
-        sb.setText("Loading " + f.getAbsolutePath());
 
         if (firstDocument) {
             firstDocument = false;
@@ -435,17 +449,16 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
                     settings.addRecentFile(f);
                     storeSettings();
                     updateRecentMenu();
-                    sb.setText("Loaded : " + f.getAbsolutePath());
+                    log.info("Loaded : " + f.getAbsolutePath());
                 } catch (UnsupportedEncodingException ex) {
-                    sb.setText("Could not open the chosen file due to encoding problems");
+                    log.error("Could not open the chosen file due to encoding problems");
                 } catch (FileNotFoundException ex) {
-                    sb.setText("The chosen file does not exists");
+                    log.error("The chosen file does not exists");
                 } catch (UnsupportedFormatException ex) {
-                    sb.setText("The chosen file is not a valid APT file");
+                    log.error("The chosen file is not a valid APT file");
                 } catch (ConverterException ex) {
-                    sb.setText("Parser exception: " + ex.getMessage());
+                    log.error("Parser exception: " + ex.getMessage());
                 }
-                sb.setText("Loaded " + f.getAbsolutePath());
             }
         }
         );
@@ -486,8 +499,7 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
             if (proceed) {
                 activeExportDir = fileChooser.getCurrentDirectory();
                 if (aptivatorDocument.storeAsPdf(file)) {
-                    //InfoBox.show("PDF successfully stored to " + file.getAbsolutePath());
-                    sb.setText("PDF successfully stored to " + file.getAbsolutePath());
+                    log.info("PDF successfully stored to " + file.getAbsolutePath());
                 } else {
                     ErrorBox.show("Could not store file as PDF!");
                 }

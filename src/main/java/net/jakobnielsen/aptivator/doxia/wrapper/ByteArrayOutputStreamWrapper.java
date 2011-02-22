@@ -16,11 +16,9 @@
 
 package net.jakobnielsen.aptivator.doxia.wrapper;
 
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-
 import org.codehaus.plexus.util.StringUtils;
+
+import java.io.ByteArrayOutputStream;
 
 /**
  * Wrapper for an output stream.
@@ -29,9 +27,6 @@ import org.codehaus.plexus.util.StringUtils;
  * @version $Id: OutputStreamWrapper.java 712866 2008-11-10 23:12:36Z hboutemy $
  */
 public class ByteArrayOutputStreamWrapper extends AbstractWrapper implements Wrapper {
-
-    /** serialVersionUID */
-    static final long serialVersionUID = 3329037527245430610L;
 
     private ByteArrayOutputStream out;
 

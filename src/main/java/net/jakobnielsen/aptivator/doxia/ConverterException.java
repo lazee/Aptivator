@@ -17,6 +17,11 @@ package net.jakobnielsen.aptivator.doxia;
 
 import net.jakobnielsen.aptivator.AptivatorException;
 
+/**
+ * Converter exception.
+ *
+ * @author <a href="mailto:jakobnielsen@gmail.com">Jakob Vad Nielsen</a>
+ */
 public class ConverterException extends AptivatorException {
 
     public ConverterException(String message, Throwable cause) {

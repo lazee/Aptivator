@@ -28,6 +28,7 @@ import net.jakobnielsen.aptivator.renderer.AptivatorScrollPane;
 import net.jakobnielsen.aptivator.renderer.Styler;
 import net.jakobnielsen.aptivator.settings.entities.StyleSheet;
 import net.jakobnielsen.aptivator.settings.entities.Stylesheets;
+import org.apache.log4j.Logger;
 import org.codehaus.plexus.PlexusContainer;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 import org.xhtmlrenderer.simple.XHTMLPanel;
@@ -57,11 +58,11 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
- * @author jakob
+ * Aptivator document viewer
+ *
+ * @author <a href="mailto:jakobnielsen@gmail.com">Jakob Vad Nielsen</a>
  */
 public class AptivatorDocument {
 
@@ -80,6 +81,8 @@ public class AptivatorDocument {
     private JComboBox stylesheetCombo;
 
     private PlexusContainer plexus;
+
+    private static Logger log = Logger.getLogger(AptivatorDocument.class);
 
     public AptivatorDocument(PlexusContainer plexus) {
         this.plexus = plexus;
@@ -221,7 +224,6 @@ public class AptivatorDocument {
         try {
             return new AptivatorScrollPane(getXHTMLPanel());
         } catch (Exception ex) {
-            Logger.getLogger(Aptivator.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
     }
@@ -230,10 +232,13 @@ public class AptivatorDocument {
             throws UnsupportedEncodingException, FileNotFoundException, UnsupportedFormatException, ConverterException {
 
 
-        if (file == null || !file.exists()) {
-            ErrorBox.show("Given file is null");
+        if (file == null) {
+            ErrorBox.show("Given file is null!");
             return false;
+        } else if (!file.exists()) {
+            ErrorBox.show("The given file doesn't exist anymore: " + file.getAbsolutePath());
         }
+
         try {
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             InputFileWrapper inputFileWrapper = InputFileWrapper.valueOf(file.getAbsolutePath(), "apt",
@@ -255,22 +260,22 @@ public class AptivatorDocument {
                     try {
                         getXHTMLPanel().setDocument(bais, "");
                     } catch (Exception ex) {
-                        Logger.getLogger(Aptivator.class.getName()).log(Level.SEVERE, null, ex);
+                        log.error(ex);
                     }
                 } else {
-                    Logger.getLogger(Aptivator.class.getName()).log(Level.SEVERE, "Bais error");
+                    log.error("BAIS error");
                 }
             } else {
-                Logger.getLogger(Aptivator.class.getName()).log(Level.SEVERE, "Writer error");
+                log.error("Write error");
             }
         } catch (UnsupportedFormatException ex) {
-            Logger.getLogger(Aptivator.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex);
         } catch (IllegalArgumentException ex) {
-            Logger.getLogger(Aptivator.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex);
         } catch (UnsupportedEncodingException ex) {
-            Logger.getLogger(Aptivator.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex);
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(Aptivator.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex);
         }
         return true;
     }
@@ -291,9 +296,9 @@ public class AptivatorDocument {
             DesktopUtil.openFile(outputFile);
             return true;
         } catch (IOException e) {
-            Logger.getLogger(Aptivator.class.getName()).log(Level.SEVERE, "IOException", e);
+            log.error(e);
         } catch (DocumentException e) {
-            Logger.getLogger(Aptivator.class.getName()).log(Level.SEVERE, "DocumentException", e);
+            log.error(e);
         } finally {
             try {
                 if (os != null) {
@@ -345,19 +350,19 @@ public class AptivatorDocument {
                     }
                     DesktopUtil.openFile(outputFile);
                 } else {
-                    Logger.getLogger(Aptivator.class.getName()).log(Level.SEVERE, "Bais error");
+                    log.error("BAIS error");
                 }
             } else {
-                Logger.getLogger(Aptivator.class.getName()).log(Level.SEVERE, "Writer error");
+                log.error("Write error");
             }
         } catch (UnsupportedFormatException ex) {
-            Logger.getLogger(Aptivator.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex);
         } catch (IllegalArgumentException ex) {
-            Logger.getLogger(Aptivator.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex);
         } catch (UnsupportedEncodingException ex) {
-            Logger.getLogger(Aptivator.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex);
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(Aptivator.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex);
         }
         return true;
     }

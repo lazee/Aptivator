@@ -19,8 +19,7 @@ import com.ibm.icu.text.CharsetDetector;
 import com.ibm.icu.text.CharsetMatch;
 import net.jakobnielsen.aptivator.doxia.wrapper.InputFileWrapper;
 import net.jakobnielsen.aptivator.doxia.wrapper.Wrapper;
-import org.apache.maven.doxia.logging.Log;
-import org.apache.maven.doxia.logging.SystemStreamLog;
+import org.apache.log4j.Logger;
 import org.apache.maven.doxia.parser.ParseException;
 import org.apache.maven.doxia.parser.Parser;
 import org.apache.maven.doxia.sink.Sink;
@@ -41,8 +40,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Default implementation of <code>Converter</code>
@@ -51,6 +48,8 @@ import java.util.logging.Logger;
  * @version $Id: DefaultConverter.java 712860 2008-11-10 22:54:37Z hboutemy $
  */
 public class DefaultConverter {
+
+    private static Logger log = Logger.getLogger(DefaultConverter.class);
 
     private static final String APT_PARSER = "apt";
 
@@ -68,13 +67,6 @@ public class DefaultConverter {
      */
     public static final String[] SUPPORTED_TO_FORMAT = {XHTML_SINK, ITEXT_SINK};
 
-   
-
-    /**
-     * Doxia logger
-     */
-    private Log log;
-
     ///**
     // * {@inheritDoc}
     // */
@@ -87,11 +79,7 @@ public class DefaultConverter {
      *
      * @return Log
      */
-    protected Log getLog() {
-        if (log == null) {
-            log = new SystemStreamLog();
-        }
-
+    protected Logger getLog() {
         return log;
     }
 
@@ -111,7 +99,6 @@ public class DefaultConverter {
             Parser parser;
             try {
                 parser = ConverterUtil.getParser(plexus, input.getFormat(), SUPPORTED_FROM_FORMAT);
-                parser.enableLogging(log);
             } catch (ComponentLookupException e) {
                 throw new ConverterException("ComponentLookupException: " + e.getMessage(), e);
             }
@@ -133,16 +120,14 @@ public class DefaultConverter {
             } catch (IOException e) {
                 throw new ConverterException("IOException: " + e.getMessage(), e);
             }
-            sink.enableLogging(log);
-
             if (getLog().isDebugEnabled()) {
                 getLog().debug("Sink used: " + sink.getClass().getName());
             }
 
             parse(parser, input.getFormat(), new FileReader(input.getFile()), sink);
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(DefaultConverter.class.getName()).log(Level.SEVERE, null, ex);
-        } 
+            log.error(ex);
+        }
     }
 
     public void convert(PlexusContainer plexus, InputFileWrapper input, File outputDir, String name, String outFormat)
@@ -163,7 +148,6 @@ public class DefaultConverter {
             Parser parser;
             try {
                 parser = ConverterUtil.getParser(plexus, input.getFormat(), SUPPORTED_FROM_FORMAT);
-                parser.enableLogging(log);
             } catch (ComponentLookupException e) {
                 throw new ConverterException("ComponentLookupException: " + e.getMessage(), e);
             }
@@ -185,15 +169,13 @@ public class DefaultConverter {
             } catch (IOException e) {
                 throw new ConverterException("IOException: " + e.getMessage(), e);
             }
-            sink.enableLogging(log);
-
             if (getLog().isDebugEnabled()) {
                 getLog().debug("Sink used: " + sink.getClass().getName());
             }
 
             parse(parser, input.getFormat(), new FileReader(input.getFile()), sink);
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(DefaultConverter.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex);
         }
     }
 

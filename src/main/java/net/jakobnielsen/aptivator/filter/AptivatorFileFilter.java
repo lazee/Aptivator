@@ -15,9 +15,14 @@
  */
 package net.jakobnielsen.aptivator.filter;
 
-import java.io.File;
 import javax.swing.filechooser.FileFilter;
+import java.io.File;
 
+/**
+ * Aptivator file filter.
+ *
+ * @author <a href="mailto:jakobnielsen@gmail.com">Jakob Vad Nielsen</a>
+ */
 public class AptivatorFileFilter extends FileFilter {
 
     private String extension;

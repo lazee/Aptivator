@@ -16,21 +16,15 @@
 
 package net.jakobnielsen.aptivator.doxia.wrapper;
 
-import java.io.ByteArrayOutputStream;
-
-import java.io.File;
-
-import java.io.OutputStream;
-
-import java.io.OutputStreamWriter;
-
-import java.io.UnsupportedEncodingException;
-
+import com.ibm.icu.text.CharsetDetector;
 import org.codehaus.plexus.util.IOUtil;
-
 import org.codehaus.plexus.util.StringUtils;
 
-import com.ibm.icu.text.CharsetDetector;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 
 /**
  * Abstract File wrapper for Doxia converter.
@@ -41,9 +35,6 @@ import com.ibm.icu.text.CharsetDetector;
 abstract class AbstractFileWrapper extends AbstractWrapper {
 
     public static final String AUTO_ENCODING = "auto";
-
-    /** serialVersionUID */
-    static final long serialVersionUID = 6072685230076158590L;
 
     private File file;
 

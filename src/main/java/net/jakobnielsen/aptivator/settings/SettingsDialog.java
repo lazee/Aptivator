@@ -45,7 +45,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
- * @author jakob
+ * Settings dialog
+ *
+ * @author <a href="mailto:jakobnielsen@gmail.com">Jakob Vad Nielsen</a>
  */
 public class SettingsDialog extends JDialog {
 

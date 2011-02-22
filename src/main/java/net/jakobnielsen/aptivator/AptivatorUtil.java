@@ -15,15 +15,17 @@
  */
 package net.jakobnielsen.aptivator;
 
+import org.apache.log4j.Logger;
+
 import javax.swing.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class AptivatorUtil {
+
+    private static Logger log = Logger.getLogger(AptivatorUtil.class);
 
     public static final String EXPORT_ICON = "001_53";
 
@@ -58,14 +60,14 @@ public class AptivatorUtil {
             }
             return "";
         } catch (IOException ex) {
-            Logger.getLogger(AptivatorUtil.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex);
         } finally {
             try {
                 if (is != null) {
                     is.close();
                 }
             } catch (IOException ex) {
-                Logger.getLogger(AptivatorUtil.class.getName()).log(Level.SEVERE, null, ex);
+                log.error(ex);
             }
         }
         return null;
@@ -77,7 +79,7 @@ public class AptivatorUtil {
         try {
             p.load(is);
         } catch (IOException e) {
-            Logger.getLogger(AptivatorUtil.class.getName()).log(Level.WARNING, null, e);
+            log.error(e);
             return null;
         }
         return p;

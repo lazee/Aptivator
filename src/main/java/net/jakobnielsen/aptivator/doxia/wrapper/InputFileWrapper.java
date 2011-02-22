@@ -28,11 +28,6 @@ import java.io.UnsupportedEncodingException;
 public class InputFileWrapper extends AbstractFileWrapper {
 
     /**
-     * serialVersionUID
-     */
-    static final long serialVersionUID = 6510443036267371188L;
-
-    /**
      * Private constructor. a
      *
      * @param absolutePath    not null

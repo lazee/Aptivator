@@ -15,21 +15,23 @@
  */
 package net.jakobnielsen.aptivator.renderer;
 
+import org.apache.log4j.Logger;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Add css to xhtml document.
  *
- * @author Jakob Vad Nielsen
+ * @author <a href="mailto:jakobnielsen@gmail.com">Jakob Vad Nielsen</a>
  */
 public class Styler {
+
+ private static Logger log = Logger.getLogger(Styler.class);
 
     public ByteArrayInputStream style(String xhtml) {
         return new ByteArrayInputStream(createOutputString(xhtml, getCss("maven-theme.css")).getBytes());
@@ -71,7 +73,7 @@ public class Styler {
                     is.close();
                 }
             } catch (IOException ex) {
-                Logger.getLogger(Styler.class.getName()).log(Level.SEVERE, null, ex);
+                log.error(ex);
             }
         }
     }
@@ -87,7 +89,7 @@ public class Styler {
                     is.close();
                 }
             } catch (IOException ex) {
-                Logger.getLogger(Styler.class.getName()).log(Level.SEVERE, null, ex);
+                log.error(ex);
             }
         }
     }
@@ -104,7 +106,7 @@ public class Styler {
             }
             return "";
         } catch (IOException ex) {
-            Logger.getLogger(Styler.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex);
         }
         return "";
     }

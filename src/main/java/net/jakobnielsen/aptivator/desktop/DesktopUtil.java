@@ -25,6 +25,8 @@ import java.net.URL;
 
 /**
  * Wrapper class around the Java Desktop API introduced in Java 6
+ *
+ * @author <a href="mailto:jakobnielsen@gmail.com">Jakob Vad Nielsen</a>
  */
 public class DesktopUtil {
 

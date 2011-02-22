@@ -17,6 +17,11 @@ package net.jakobnielsen.aptivator.doxia.wrapper;
 
 import java.io.OutputStream;
 
+/**
+ * Wrapper interface.
+ *
+ * @author <a href="mailto:jakobnielsen@gmail.com">Jakob Vad Nielsen</a>
+ */
 public interface Wrapper {
 
     public abstract OutputStream getOutputStream();

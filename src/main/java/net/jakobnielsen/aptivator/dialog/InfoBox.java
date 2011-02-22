@@ -19,8 +19,9 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 /**
+ * Info box
  *
- * @author jakob
+ * @author <a href="mailto:jakobnielsen@gmail.com">Jakob Vad Nielsen</a>
  */
 public class InfoBox {
 

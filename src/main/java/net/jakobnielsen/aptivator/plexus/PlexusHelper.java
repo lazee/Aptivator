@@ -26,6 +26,11 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Plexus helper.
+ *
+ * @author <a href="mailto:jakobnielsen@gmail.com">Jakob Vad Nielsen</a>
+ */
 public class PlexusHelper {
 
     private PlexusHelper() {

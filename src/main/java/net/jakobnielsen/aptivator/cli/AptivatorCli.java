@@ -23,9 +23,9 @@ import javax.swing.SwingUtilities;
 import java.lang.reflect.InvocationTargetException;
 
 /**
- * Aptivator client application.
- * 
- * @author Jakob Vad Nielsen
+ * Aptivator client.
+ *
+ * @author <a href="mailto:jakobnielsen@gmail.com">Jakob Vad Nielsen</a>
  */
 public class AptivatorCli implements Runnable {
 

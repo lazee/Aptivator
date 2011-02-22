@@ -35,6 +35,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
+/**
+ * Stylesheet dialog
+ *
+ * @author <a href="mailto:jakobnielsen@gmail.com">Jakob Vad Nielsen</a>
+ */
 public class StylesheetDialog extends JDialog {
 
     private JTextField titleField = new JTextField();

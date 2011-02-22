@@ -31,6 +31,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+/**
+ * Bean holding loaded stylesheets.
+ *
+ * @author <a href="mailto:jakobnielsen@gmail.com">Jakob Vad Nielsen</a>
+ */
 public class Stylesheets {
 
     private Map<String, StyleSheet> stylesheets = new TreeMap<String, StyleSheet>();

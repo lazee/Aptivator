@@ -17,6 +17,11 @@ package net.jakobnielsen.aptivator.settings.dao;
 
 import net.jakobnielsen.aptivator.settings.entities.Settings;
 
+/**
+ * Settings DAO interface.
+ *
+ * @author <a href="mailto:jakobnielsen@gmail.com">Jakob Vad Nielsen</a>
+ */
 public interface SettingsDao {
 
     public abstract Settings getSettings();

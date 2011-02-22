@@ -32,7 +32,7 @@ import java.util.StringTokenizer;
 /**
  * Settings DAO implementation that stores the settings in the users home directory.
  *
- * @author Jakob Vad Nielsen
+ * @author <a href="mailto:jakobnielsen@gmail.com">Jakob Vad Nielsen</a>
  */
 public class SettingsDaoProperties implements SettingsDao {
 
@@ -59,12 +59,11 @@ public class SettingsDaoProperties implements SettingsDao {
     Logger log = Logger.getLogger(SettingsDaoProperties.class);
 
     public SettingsDaoProperties() {
-        log.info("Initializing SettingsDatoPropertiesObject");
         settingsDir = new File(System.getProperty("user.home") + File.separator + propertiesDirName);
         if (settingsDir.isFile()) {
             log.debug("Deleting " + settingsDir.getAbsolutePath() + ".");
             if (!settingsDir.delete()) {
-                log.warn("Could not delete : " + settingsDir.getAbsolutePath());
+                log.debug("Could not delete : " + settingsDir.getAbsolutePath());
             }
         }
 
@@ -100,7 +99,6 @@ public class SettingsDaoProperties implements SettingsDao {
         properties.setProperty(AUTO_REFRESH_INTERVAL, "" + settings.getRefreshInterval());
         properties.setProperty(APP_SIZE_WIDTH, "" + settings.getAppSize().width);
         properties.setProperty(APP_SIZE_HEIGHT, "" + settings.getAppSize().height);
-        properties.setProperty(APP_VERSION, settings.getAppVersion());
         properties.setProperty(RECENT_FILES, createListStr(settings.getRecentFiles().getRecentFiles()));
         return properties;
     }
@@ -120,7 +118,9 @@ public class SettingsDaoProperties implements SettingsDao {
         if (properties.containsKey(RECENT_FILES)) {
             settings.getRecentFiles().setRecentFiles(splitList(properties.getProperty(RECENT_FILES)));
         }
-        settings.setAppVersion(properties.getProperty(APP_VERSION));
+        if (properties.getProperty(APP_VERSION) != null) {
+            settings.setAppVersion(properties.getProperty(APP_VERSION));
+        }
         return settings;
     }
 
@@ -169,7 +169,8 @@ public class SettingsDaoProperties implements SettingsDao {
         properties.load(new FileInputStream(getSettingsFile()));
         Properties staticProperties = AptivatorUtil.getMetaInfProperties(APP_PROPERTIES_FILE);
         if (staticProperties != null) {
-            if (staticProperties.getProperty(APP_VERSION) != null) {
+            if (staticProperties.getProperty(APP_VERSION) != null &&
+                    !"PROJECT_VERSION".equals(staticProperties.getProperty(APP_VERSION))) {
                 properties.put(APP_VERSION, staticProperties.getProperty(APP_VERSION));
             } else {
                 log.warn("No app version in properties file");

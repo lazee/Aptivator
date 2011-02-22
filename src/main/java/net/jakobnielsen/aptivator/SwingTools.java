@@ -15,14 +15,13 @@
  */
 package net.jakobnielsen.aptivator;
 
-import java.awt.Dimension;
-import java.awt.Frame;
-import javax.swing.JDialog;
+import javax.swing.*;
+import java.awt.*;
 
 /**
- * Internal Swing helper methods.
- * 
- * @author Jakob Vad Nielsen
+ * Internal swing helper class.
+ *
+ * @author <a href="mailto:jakobnielsen@gmail.com">Jakob Vad Nielsen</a>
  */
 public class SwingTools {
 

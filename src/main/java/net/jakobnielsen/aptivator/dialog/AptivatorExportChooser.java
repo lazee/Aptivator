@@ -19,6 +19,11 @@ import net.jakobnielsen.aptivator.filter.PdfFileFilter;
 
 import javax.swing.JFileChooser;
 
+/**
+ * Export chooser dialog.
+ *
+ * @author <a href="mailto:jakobnielsen@gmail.com">Jakob Vad Nielsen</a>
+ */
 public class AptivatorExportChooser extends JFileChooser {
 
     public AptivatorExportChooser() {

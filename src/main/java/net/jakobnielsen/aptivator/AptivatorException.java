@@ -16,6 +16,11 @@
 
 package net.jakobnielsen.aptivator;
 
+/**
+ *  Aptivator exception
+ *
+ *  @author <a href="mailto:jakobnielsen@gmail.com">Jakob Vad Nielsen</a>
+ */
 public class AptivatorException extends Exception {
 
     public AptivatorException(String message) {

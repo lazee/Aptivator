@@ -24,6 +24,11 @@ import net.jakobnielsen.aptivator.dialog.AboutBox;
 
 import javax.swing.JFrame;
 
+/**
+ * MacOS helper
+ *
+ * @author <a href="mailto:jakobnielsen@gmail.com">Jakob Vad Nielsen</a>
+ */
 public class MacOSAboutHandler extends Application {
 
     public MacOSAboutHandler() {

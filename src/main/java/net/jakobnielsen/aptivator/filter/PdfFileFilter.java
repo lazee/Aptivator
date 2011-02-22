@@ -18,6 +18,11 @@ package net.jakobnielsen.aptivator.filter;
 import javax.swing.filechooser.FileFilter;
 import java.io.File;
 
+/**
+ * Aptivator PDF file filter.
+ *
+ * @author <a href="mailto:jakobnielsen@gmail.com">Jakob Vad Nielsen</a>
+ */
 public class PdfFileFilter extends FileFilter {
 
     @Override

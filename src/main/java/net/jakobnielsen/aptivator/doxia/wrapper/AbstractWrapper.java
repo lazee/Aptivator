@@ -30,9 +30,6 @@ abstract class AbstractWrapper implements Serializable {
 
     public static final String AUTO_FORMAT = "auto";
 
-    /** serialVersionUID */
-    static final long serialVersionUID = -1150854786311626411L;
-
     private String format;
 
     private String[] supportedFormat;

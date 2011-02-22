@@ -19,8 +19,9 @@ import java.awt.Dimension;
 import java.io.File;
 
 /**
+ * Bean holding application settings.
  *
- * @author jakob
+ * @author <a href="mailto:jakobnielsen@gmail.com">Jakob Vad Nielsen</a>
  */
 public class Settings {
 

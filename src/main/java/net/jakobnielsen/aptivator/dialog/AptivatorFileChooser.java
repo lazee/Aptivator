@@ -19,10 +19,6 @@ import net.jakobnielsen.aptivator.filter.AptivatorFileFilter;
 
 import javax.swing.JFileChooser;
 
-/**
- *
- * @author jakob
- */
 public class AptivatorFileChooser extends JFileChooser {
 
     public AptivatorFileChooser(String extension) {
