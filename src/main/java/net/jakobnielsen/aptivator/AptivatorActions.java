@@ -27,6 +27,8 @@ public class AptivatorActions {
 
     public static final String OPEN_FILE = "OPEN_FILE";
 
+    public static final String DO_OPEN_FILE = "DO_OPEN_FILE";
+    
     public static final String REFRESH = "REFRESH";
 
     public static final String EXPORT = "EXPORT";

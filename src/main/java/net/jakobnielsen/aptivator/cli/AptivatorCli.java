@@ -16,6 +16,7 @@
 package net.jakobnielsen.aptivator.cli;
 
 import net.jakobnielsen.aptivator.Aptivator;
+import net.jakobnielsen.aptivator.macos.AptivatorMacAccessor;
 import org.apache.log4j.PropertyConfigurator;
 import org.xhtmlrenderer.util.GeneralUtil;
 
@@ -32,12 +33,7 @@ public class AptivatorCli implements Runnable {
     static {
         if (GeneralUtil.isMacOSX()) {
             try {
-                System.setProperty("apple.laf.useScreenMenuBar", "true");
-                System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Aptivator");
-                System.setProperty("apple.awt.antialiasing", "true");
-                System.setProperty("apple.awt.textantialiasing", "true");
-                System.setProperty("apple.awt.graphics.UseQuartz", "true");
-                System.setProperty("apple.awt.rendering", "speed");
+                AptivatorMacAccessor.setMacSystemProperties();
             } catch (Exception ex) {
                 // Ignoring at the moment
             }

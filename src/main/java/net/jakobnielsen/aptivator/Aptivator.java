@@ -15,9 +15,6 @@
  */
 package net.jakobnielsen.aptivator;
 
-import com.apple.eawt.AppEvent;
-import com.apple.eawt.Application;
-import com.apple.eawt.OpenFilesHandler;
 import net.jakobnielsen.aptivator.dialog.AboutBox;
 import net.jakobnielsen.aptivator.dialog.AptivatorExportChooser;
 import net.jakobnielsen.aptivator.dialog.AptivatorFileChooser;
@@ -25,6 +22,7 @@ import net.jakobnielsen.aptivator.dialog.ErrorBox;
 import net.jakobnielsen.aptivator.doxia.ConverterException;
 import net.jakobnielsen.aptivator.doxia.UnsupportedFormatException;
 import net.jakobnielsen.aptivator.i18n.CustomClassLoader;
+import net.jakobnielsen.aptivator.macos.AptivatorMacAccessor;
 import net.jakobnielsen.aptivator.plexus.PlexusHelper;
 import net.jakobnielsen.aptivator.settings.SettingsDialog;
 import net.jakobnielsen.aptivator.settings.dao.SettingsDaoProperties;
@@ -60,6 +58,7 @@ import java.util.ResourceBundle;
 import static net.jakobnielsen.aptivator.AptivatorActions.ABOUT;
 import static net.jakobnielsen.aptivator.AptivatorActions.CLEAR_LOG_LIST;
 import static net.jakobnielsen.aptivator.AptivatorActions.CLEAR_RECENT_LIST;
+import static net.jakobnielsen.aptivator.AptivatorActions.DO_OPEN_FILE;
 import static net.jakobnielsen.aptivator.AptivatorActions.EXPORT;
 import static net.jakobnielsen.aptivator.AptivatorActions.OPEN_FILE;
 import static net.jakobnielsen.aptivator.AptivatorActions.QUIT;
@@ -144,18 +143,10 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
             } else {
                 ErrorBox.show(rb.getString("error.file.missing " + doc.getAbsolutePath()), rb.getString("error"));
             }
-        } else if (AptivatorUtil.isMacOSX()) {
-            Application app = Application.getApplication();
-            app.setOpenFileHandler(new OpenFilesHandler() {
+        }
 
-                @Override
-                public void openFiles(AppEvent.OpenFilesEvent openFilesEvent) {
-                    List<File> fileList = openFilesEvent.getFiles();
-                    if (fileList != null && fileList.size() > 0) {
-                        loadDocument(fileList.get(0));
-                    }
-                }
-            });
+        if (AptivatorUtil.isMacOSX()) {
+            AptivatorMacAccessor.activateOpenFileHandler(this);
         }
     }
 
@@ -238,6 +229,8 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
             if (fileChooser.getSelectedFile() != null) {
                 loadDocument(fileChooser.getSelectedFile());
             }
+        } else if (DO_OPEN_FILE.equals(e.getActionCommand())) {
+            loadDocument((File) e.getSource());
         } else if (ABOUT.equals(e.getActionCommand())) {
             AboutBox aboutBox = new AboutBox(new JFrame(), rb, settings.getAppVersion());
             aboutBox.pack();
