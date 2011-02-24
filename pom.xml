@@ -20,7 +20,7 @@
     <groupId>net.jakobnielsen</groupId>
     <artifactId>aptivator</artifactId>
     <packaging>jar</packaging>
-    <version>1.1.1</version>
+    <version>1.2-SNAPSHOT</version>
     <name>Aptivator</name>
     <description>Doxia Apt viewer</description>
     <url>http://aptivator.jakobnielsen.net</url>
