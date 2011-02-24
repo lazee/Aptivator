@@ -28,7 +28,7 @@ import java.util.Locale;
 
 /**
  * Modified implementation of the default <code>Converter</code>
- *
+ * <p/>
  * Original author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  */
 public class DefaultConverter {
@@ -54,38 +54,49 @@ public class DefaultConverter {
             throw new IllegalArgumentException("output is required");
         }
 
+
+        Parser parser;
         try {
-            Parser parser;
-            try {
-                parser = ConverterUtil.getParser(plexus, input.getFormat(), SUPPORTED_FROM_FORMAT);
-            } catch (ComponentLookupException e) {
-                throw new ConverterException("ComponentLookupException: " + e.getMessage(), e);
-            }
+            parser = ConverterUtil.getParser(plexus, input.getFormat(), SUPPORTED_FROM_FORMAT);
+        } catch (ComponentLookupException e) {
+            throw new ConverterException("ComponentLookupException: " + e.getMessage(), e);
+        } catch (Exception e) {
+            throw new ConverterException("Exception when getting parser: " + e.getMessage(), e);
+        }
 
-            if (log.isDebugEnabled()) {
-                log.debug("Parser used: " + parser.getClass().getName());
-            }
+        if (log.isDebugEnabled()) {
+            log.debug("Parser used: " + parser.getClass().getName());
+        }
 
-            SinkFactory sinkFactory;
-            try {
-                sinkFactory = ConverterUtil.getSinkFactory(plexus, output.getFormat(), SUPPORTED_TO_FORMAT);
-            } catch (ComponentLookupException e) {
-                throw new ConverterException("ComponentLookupException: " + e.getMessage(), e);
-            }
+        SinkFactory sinkFactory;
+        try {
+            sinkFactory = ConverterUtil.getSinkFactory(plexus, output.getFormat(), SUPPORTED_TO_FORMAT);
+        } catch (ComponentLookupException e) {
+            throw new ConverterException("ComponentLookupException: " + e.getMessage(), e);
+        } catch (Exception e) {
+            throw new ConverterException("Exception when getting sink factory: " + e.getMessage(), e);
+        }
 
-            Sink sink;
-            try {
-                sink = sinkFactory.createSink(output.getOutputStream(), output.getEncoding());
-            } catch (IOException e) {
-                throw new ConverterException("IOException: " + e.getMessage(), e);
-            }
-            if (log.isDebugEnabled()) {
-                log.debug("Sink used: " + sink.getClass().getName());
-            }
+        Sink sink;
+        try {
+            sink = sinkFactory.createSink(output.getOutputStream(), output.getEncoding());
+        } catch (IOException e) {
+            throw new ConverterException("IOException: " + e.getMessage(), e);
+        } catch (Exception e) {
+            throw new ConverterException("Exception when creating sink: " + e.getMessage(), e);
+        }
 
+        if (log.isDebugEnabled()) {
+            log.debug("Sink used: " + sink.getClass().getName());
+        }
+
+        try {
             parse(parser, input.getFormat(), new FileReader(input.getFile()), sink);
-        } catch (FileNotFoundException ex) {
-            log.error(ex);
+        } catch (FileNotFoundException e) {
+            log.error(e);
+            throw new ConverterException("FileNotFoundException when parsing file: " + e.getMessage(), e);
+        } catch (Exception e) {
+            throw new ConverterException("Exception when parsing file " + e.getMessage(), e);
         }
     }
 

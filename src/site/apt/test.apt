@@ -1,0 +1,7 @@
+    ------
+    Test apt file
+    ------
+
+Section
+
+%{snippet|id=snip-id|file=/Users/jakob/test.java}

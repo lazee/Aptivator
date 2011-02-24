@@ -20,6 +20,7 @@ import net.jakobnielsen.aptivator.dialog.AptivatorExportChooser;
 import net.jakobnielsen.aptivator.dialog.AptivatorFileChooser;
 import net.jakobnielsen.aptivator.dialog.ErrorBox;
 import net.jakobnielsen.aptivator.doxia.ConverterException;
+import net.jakobnielsen.aptivator.doxia.DoxiaLogWrapperOutputStream;
 import net.jakobnielsen.aptivator.doxia.UnsupportedFormatException;
 import net.jakobnielsen.aptivator.i18n.CustomClassLoader;
 import net.jakobnielsen.aptivator.macos.AptivatorMacAccessor;
@@ -50,6 +51,7 @@ import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Locale;
@@ -148,6 +150,19 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
         if (AptivatorUtil.isMacOSX()) {
             AptivatorMacAccessor.activateOpenFileHandler(this);
         }
+
+        overrideStd();
+    }
+
+    /*
+        Oh joy of dirty hacks.
+
+        Doxia uses its own logging mechanism that prints directly to StdOut and StdErr (Shame on you). We need to
+        catch this logging, so that it can be viewed inside the application.
+     */
+    private void overrideStd() {
+        System.setErr(new PrintStream(new DoxiaLogWrapperOutputStream(logListModel, true), true));
+        System.setOut(new PrintStream(new DoxiaLogWrapperOutputStream(logListModel, false), true));
     }
 
     private void configureUI() {

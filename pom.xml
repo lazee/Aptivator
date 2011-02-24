@@ -279,7 +279,7 @@
     </dependencies>
 
     <properties>
-        <doxiaVersion>1.1.2</doxiaVersion>
+        <doxiaVersion>1.1.4</doxiaVersion>
     </properties>
 
     <distributionManagement>
