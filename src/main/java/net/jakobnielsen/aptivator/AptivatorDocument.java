@@ -135,14 +135,14 @@ public class AptivatorDocument {
             public void linkClicked(BasicPanel panel, String uri) {
                 if (uri.startsWith("http://")) {
                     if (!DesktopUtil.openUrl(uri)) {
-                        ErrorBox.show(rb.getString("error.url.external.browser"), rb.getString("error"));
+                        ErrorBox.show(rb.getString("error.url.external.browser"), MessagesProperties.ERROR);
                     }
                 } else if (uri.startsWith("mailto:")) {
                     if (!DesktopUtil.openMail(uri)) {
-                        ErrorBox.show(rb.getString("error.open.mail"), rb.getString("error"));
+                        ErrorBox.show(rb.getString("error.open.mail"), MessagesProperties.ERROR);
                     }
                 } else {
-                    InfoBox.show(rb.getString("error.internal.links") + ": " + uri, rb.getString("error"));
+                    InfoBox.show(rb.getString("error.internal.links") + ": " + uri, MessagesProperties.ERROR);
                 }
             }
         });
@@ -201,13 +201,13 @@ public class AptivatorDocument {
                         try {
                             loadAptFile();
                         } catch (UnsupportedEncodingException ex) {
-                            log.error("buildToolbar() " + ex.getMessage());
+                            log.error(ex.getMessage());
                         } catch (FileNotFoundException ex) {
-                            log.error("buildToolbar() " + ex.getMessage());
+                            log.error(ex.getMessage());
                         } catch (UnsupportedFormatException ex) {
-                            log.error("buildToolbar() " + ex.getMessage());
+                            log.error(ex.getMessage());
                         } catch (ConverterException ex) {
-                            log.error("buildToolbar() " + ex.getMessage());
+                            log.error(ex.getMessage());
                         }
                     }
                 }
@@ -250,10 +250,10 @@ public class AptivatorDocument {
             throws UnsupportedEncodingException, FileNotFoundException, UnsupportedFormatException, ConverterException {
 
         if (f == null) {
-            ErrorBox.show(rb.getString("error.file.null"), rb.getString("error"));
+            ErrorBox.show(rb.getString("error.file.null"), rb.getString(MessagesProperties.ERROR));
             return false;
         } else if (!f.exists()) {
-            ErrorBox.show(rb.getString("error.file.missing") + ": " + f.getAbsolutePath(), rb.getString("error"));
+            ErrorBox.show(rb.getString("error.file.missing") + ": " + f.getAbsolutePath(), MessagesProperties.ERROR);
         }
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -263,7 +263,7 @@ public class AptivatorDocument {
                 byteArrayOutputStream,
                 "xhtml", "utf-8", new String[]{DefaultConverter.XHTML_SINK});
         DefaultConverter defaultConverter = new DefaultConverter();
-        defaultConverter.convert(plexus, inputFileWrapper, outputStreamWrapper, DefaultConverter.XHTML_SINK);
+        defaultConverter.convert(plexus, inputFileWrapper, outputStreamWrapper);
         if (outputStreamWrapper.getOutputStream() != null) {
             ByteArrayInputStream bais;
             if (activeStyleSheet != null) {
@@ -307,7 +307,7 @@ public class AptivatorDocument {
     public boolean storeAsPdf(File outputFile) {
 
         if (outputFile == null) {
-            ErrorBox.show(rb.getString("error.file.null"), rb.getString("error"));
+            ErrorBox.show(rb.getString("error.file.null"), MessagesProperties.ERROR);
             return false;
         }
         OutputStream os = null;
@@ -337,7 +337,7 @@ public class AptivatorDocument {
 
     public boolean viewInBrowser() throws ConverterException {
         if (file == null || !file.exists()) {
-            ErrorBox.show(rb.getString("error.file.null"), rb.getString("error"));
+            ErrorBox.show(rb.getString("error.file.null"), MessagesProperties.ERROR);
             return false;
         }
         try {
@@ -348,7 +348,7 @@ public class AptivatorDocument {
                     byteArrayOutputStream,
                     "xhtml", "utf-8", new String[]{DefaultConverter.XHTML_SINK});
             DefaultConverter defaultConverter = new DefaultConverter();
-            defaultConverter.convert(plexus, inputFileWrapper, outputStreamWrapper, DefaultConverter.XHTML_SINK);
+            defaultConverter.convert(plexus, inputFileWrapper, outputStreamWrapper);
             if (outputStreamWrapper.getOutputStream() != null) {
                 String out;
                 if (activeStyleSheet != null) {

@@ -31,7 +31,7 @@ import java.util.Map;
  *
  * @author <a href="mailto:jakobnielsen@gmail.com">Jakob Vad Nielsen</a>
  */
-public class PlexusHelper {
+public final class PlexusHelper {
 
     private PlexusHelper() {
         // Intentional
@@ -53,18 +53,6 @@ public class PlexusHelper {
         containerConfiguration.setContext(context);
 
         return new DefaultPlexusContainer(containerConfiguration);
-    }
-
-    /**
-     * Stop the Plexus container.
-     */
-    public static void stopPlexusContainer(PlexusContainer plexus) {
-        if (plexus == null) {
-            return;
-        }
-
-        plexus.dispose();
-        plexus = null;
     }
 
 }

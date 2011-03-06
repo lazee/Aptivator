@@ -27,7 +27,7 @@ import java.awt.event.ActionListener;
  */
 public class MenuAction extends AbstractAction {
 
-    ActionListener listener;
+    private ActionListener listener;
 
     public MenuAction(ActionListener listener, String text, String id) {
         super(text);

@@ -9,7 +9,7 @@ import java.io.ByteArrayOutputStream;
  *
  * Original author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  */
-public class ByteArrayOutputStreamWrapper extends AbstractWrapper implements Wrapper {
+public final class ByteArrayOutputStreamWrapper extends AbstractWrapper implements Wrapper {
 
     private ByteArrayOutputStream out;
 

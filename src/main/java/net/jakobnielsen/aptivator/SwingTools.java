@@ -24,8 +24,12 @@ import java.awt.event.ActionListener;
  *
  * @author <a href="mailto:jakobnielsen@gmail.com">Jakob Vad Nielsen</a>
  */
-public class SwingTools {
+public final class SwingTools {
 
+    private SwingTools() {
+        // Intentional
+    }
+    
     /**
      * Center frame on screen.
      *

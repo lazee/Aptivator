@@ -28,7 +28,7 @@ import java.util.Properties;
  *
  * @author <a href="mailto:jakobnielsen@gmail.com">Jakob Vad Nielsen</a>
  */
-public class AptivatorUtil {
+public final class AptivatorUtil {
 
     private static Logger log = Logger.getLogger(AptivatorUtil.class);
 
@@ -58,8 +58,10 @@ public class AptivatorUtil {
             if (is != null) {
                 StringBuffer out = new StringBuffer();
                 byte[] b = new byte[1000];
-                for (int n; (n = is.read(b)) != -1;) {
+                int n = is.read(b);
+                while (n != -1) {
                     out.append(new String(b, 0, n));
+                    n = is.read(b);
                 }
                 return out.toString();
             }

@@ -36,11 +36,11 @@ import java.util.StringTokenizer;
  */
 public class SettingsDaoProperties {
 
-    private static final String propertiesDirName = ".aptivator";
+    private static final String PROPERTIES_DIR_NAME = ".aptivator";
 
-    private static final String propertiesFileName = "settings.properties";
+    private static final String PROPERTIES_FILE_NAME = "settings.properties";
 
-    private static final String stylesheetsFileName = "stylesheets.cfg";
+    private static final String STYLESHEETS_FILE_NAME = "stylesheets.cfg";
 
     private static final String AUTO_REFRESH_INTERVAL = "auto.refresh.interval";
 
@@ -56,10 +56,10 @@ public class SettingsDaoProperties {
 
     private File settingsDir;
 
-    Logger log = Logger.getLogger(SettingsDaoProperties.class);
+    private final Logger log = Logger.getLogger(SettingsDaoProperties.class);
 
     public SettingsDaoProperties() {
-        settingsDir = new File(System.getProperty("user.home") + File.separator + propertiesDirName);
+        settingsDir = new File(System.getProperty("user.home") + File.separator + PROPERTIES_DIR_NAME);
         if (settingsDir.isFile()) {
             log.debug("Deleting " + settingsDir.getAbsolutePath() + ".");
             if (!settingsDir.delete()) {
@@ -186,10 +186,10 @@ public class SettingsDaoProperties {
     }
 
     private File getStylesheetsFile() {
-        return new File(settingsDir, File.separator + stylesheetsFileName);
+        return new File(settingsDir, File.separator + STYLESHEETS_FILE_NAME);
     }
 
     private File getSettingsFile() {
-        return new File(settingsDir, File.separator + propertiesFileName);
+        return new File(settingsDir, File.separator + PROPERTIES_FILE_NAME);
     }
 }

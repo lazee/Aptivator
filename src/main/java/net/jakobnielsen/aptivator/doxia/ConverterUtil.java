@@ -10,8 +10,12 @@ import org.codehaus.plexus.component.repository.exception.ComponentLookupExcepti
  *
  * Original author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  */
-public class ConverterUtil {
+public final class ConverterUtil {
 
+    private ConverterUtil() {
+        // Intentional
+    }
+    
     /**
      * @param plexus not null
      * @param format not null

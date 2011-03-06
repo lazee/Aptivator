@@ -27,7 +27,7 @@ abstract class AbstractWrapper implements Serializable {
         if (supportedFormat == null) {
             throw new IllegalArgumentException("supportedFormat is required");
         }
-        this.supportedFormat = supportedFormat;
+        this.supportedFormat = supportedFormat.clone();
     }
 
     /**
@@ -55,7 +55,7 @@ abstract class AbstractWrapper implements Serializable {
      * @param supportedFormat the supportedFormat to set
      */
     void setSupportedFormat(String[] supportedFormat) {
-        this.supportedFormat = supportedFormat;
+        this.supportedFormat = supportedFormat.clone();
     }
 
     /** {@inheritDoc} */

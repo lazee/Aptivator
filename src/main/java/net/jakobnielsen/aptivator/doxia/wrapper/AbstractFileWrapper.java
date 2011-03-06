@@ -40,11 +40,11 @@ abstract class AbstractFileWrapper extends AbstractWrapper {
             throw new IllegalArgumentException("absolutePath is required");
         }
 
-        File file = new File(absolutePath);
-        if (!file.isAbsolute()) {
-            file = new File(new File("").getAbsolutePath(), absolutePath);
+        File absolutePathFile = new File(absolutePath);
+        if (!absolutePathFile.isAbsolute()) {
+            absolutePathFile = new File(new File("").getAbsolutePath(), absolutePath);
         }
-        this.file = file;
+        this.file = absolutePathFile;
 
         if (StringUtils.isNotEmpty(encoding) && !encoding.equalsIgnoreCase(encoding) && !validateEncoding(encoding)) {
             StringBuffer msg = new StringBuffer();
@@ -133,7 +133,7 @@ abstract class AbstractFileWrapper extends AbstractWrapper {
 
     /** {@inheritDoc} */
     public java.lang.String toString() {
-        StringBuffer buf = new StringBuffer(super.toString() + "\n");
+        StringBuffer buf = new StringBuffer(super.toString()).append("\n");
         buf.append("file= '");
         buf.append(getFile());
         buf.append("'");

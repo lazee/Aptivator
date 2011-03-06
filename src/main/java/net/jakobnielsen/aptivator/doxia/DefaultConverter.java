@@ -19,7 +19,6 @@ import org.codehaus.plexus.util.xml.XmlUtil;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,62 +44,39 @@ public class DefaultConverter {
 
     public static final String[] SUPPORTED_TO_FORMAT = {XHTML_SINK, ITEXT_SINK};
 
-    public void convert(PlexusContainer plexus, InputFileWrapper input, Wrapper output, String outFormat)
+    public void convert(PlexusContainer plexus, InputFileWrapper input, Wrapper output)
             throws UnsupportedFormatException, ConverterException {
+
+        Parser parser;
+        SinkFactory sinkFactory;
+        Sink sink;
+
         if (input == null) {
             throw new IllegalArgumentException("input is required");
-        }
-        if (output == null) {
+        } else if (output == null) {
             throw new IllegalArgumentException("output is required");
         }
 
-
-        Parser parser;
         try {
             parser = ConverterUtil.getParser(plexus, input.getFormat(), SUPPORTED_FROM_FORMAT);
+            sinkFactory = ConverterUtil.getSinkFactory(plexus, output.getFormat(), SUPPORTED_TO_FORMAT);
+            sink = sinkFactory.createSink(output.getOutputStream(), output.getEncoding());
+            parse(parser,  new FileReader(input.getFile()), sink);
         } catch (ComponentLookupException e) {
             throw new ConverterException("ComponentLookupException: " + e.getMessage(), e);
+        } catch (IOException e) {
+            throw new ConverterException("IOException: " + e.getMessage(), e);
         } catch (Exception e) {
             throw new ConverterException("Exception when getting parser: " + e.getMessage(), e);
         }
 
         if (log.isDebugEnabled()) {
             log.debug("Parser used: " + parser.getClass().getName());
-        }
-
-        SinkFactory sinkFactory;
-        try {
-            sinkFactory = ConverterUtil.getSinkFactory(plexus, output.getFormat(), SUPPORTED_TO_FORMAT);
-        } catch (ComponentLookupException e) {
-            throw new ConverterException("ComponentLookupException: " + e.getMessage(), e);
-        } catch (Exception e) {
-            throw new ConverterException("Exception when getting sink factory: " + e.getMessage(), e);
-        }
-
-        Sink sink;
-        try {
-            sink = sinkFactory.createSink(output.getOutputStream(), output.getEncoding());
-        } catch (IOException e) {
-            throw new ConverterException("IOException: " + e.getMessage(), e);
-        } catch (Exception e) {
-            throw new ConverterException("Exception when creating sink: " + e.getMessage(), e);
-        }
-
-        if (log.isDebugEnabled()) {
             log.debug("Sink used: " + sink.getClass().getName());
-        }
-
-        try {
-            parse(parser, input.getFormat(), new FileReader(input.getFile()), sink);
-        } catch (FileNotFoundException e) {
-            log.error(e);
-            throw new ConverterException("FileNotFoundException when parsing file: " + e.getMessage(), e);
-        } catch (Exception e) {
-            throw new ConverterException("Exception when parsing file " + e.getMessage(), e);
         }
     }
 
-    private void parse(Parser parser, String inputFormat, Reader reader, Sink sink)
+    private void parse(Parser parser, Reader reader, Sink sink)
             throws ConverterException {
         try {
             parser.parse(reader, sink);

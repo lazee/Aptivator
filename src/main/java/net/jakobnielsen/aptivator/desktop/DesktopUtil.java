@@ -28,7 +28,7 @@ import java.net.URL;
  *
  * @author <a href="mailto:jakobnielsen@gmail.com">Jakob Vad Nielsen</a>
  */
-public class DesktopUtil {
+public final class DesktopUtil {
 
     private DesktopUtil() {
         // Intentional

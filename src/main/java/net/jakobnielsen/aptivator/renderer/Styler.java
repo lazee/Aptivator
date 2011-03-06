@@ -99,8 +99,10 @@ public class Styler {
             if (is != null) {
                 StringBuffer out = new StringBuffer();
                 byte[] b = new byte[1000];
-                for (int n; (n = is.read(b)) != -1;) {
+                int n = is.read(b);
+                while (n != -1) {
                     out.append(new String(b, 0, n));
+                    n = is.read(b);
                 }
                 return out.toString();
             }

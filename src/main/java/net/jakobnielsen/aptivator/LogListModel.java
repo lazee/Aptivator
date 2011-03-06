@@ -27,9 +27,9 @@ import java.util.List;
  */
 public class LogListModel extends AbstractListModel {
 
-    private static int MAX_SIZE = 200;
+    private static final int MAX_SIZE = 200;
     
-    List<String> delegate;
+    private final List<String> delegate;
 
     public LogListModel() {
         super();
@@ -47,9 +47,9 @@ public class LogListModel extends AbstractListModel {
     }
 
     public void clear() {
-        int old_size = delegate.size();
+        int oldSize = delegate.size();
         delegate.clear();
-        fireIntervalRemoved(this, 0, old_size);
+        fireIntervalRemoved(this, 0, oldSize);
     }
 
     public void addElement(String element) {

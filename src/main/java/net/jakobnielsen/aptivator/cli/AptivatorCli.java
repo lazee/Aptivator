@@ -43,7 +43,7 @@ public class AptivatorCli implements Runnable {
     private final String[] args;
 
     public AptivatorCli(String[] args) {
-        this.args = args;
+        this.args = args.clone();
     }
 
     public void run() {
@@ -56,11 +56,11 @@ public class AptivatorCli implements Runnable {
     public static void main(String[] args) {
         PropertyConfigurator.configure(AptivatorCli.class.getResource("/META-INF/log4j.properties"));
         try {
-            SwingUtilities.invokeAndWait(new AptivatorCli(args));
+            SwingUtilities.invokeAndWait(new AptivatorCli(args.clone()));
         } catch (InvocationTargetException ex) {
-            ex.printStackTrace();
+            System.err.println(ex.getMessage()); //NOSONAR
         } catch (InterruptedException ex) {
-            ex.printStackTrace();
+            System.err.println(ex.getMessage()); //NOSONAR
         }
     }
 }

@@ -23,9 +23,13 @@ import javax.swing.JOptionPane;
  *
  * @author <a href="mailto:jakobnielsen@gmail.com">Jakob Vad Nielsen</a>
  */
-public class InfoBox {
+public final class InfoBox {
 
-       public static void show(String message, String title) {
+    private InfoBox() {
+        // Intentional
+    }
+
+    public static void show(String message, String title) {
         JOptionPane.showMessageDialog(new JFrame(), message, title,
                 JOptionPane.INFORMATION_MESSAGE);
     }

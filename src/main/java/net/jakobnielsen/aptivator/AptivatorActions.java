@@ -21,7 +21,7 @@ package net.jakobnielsen.aptivator;
  *
  * @author <a href="mailto:jakobnielsen@gmail.com">Jakob Vad Nielsen</a>
  */
-public class AptivatorActions {
+public final class AptivatorActions {
 
     public static final String CLEAR_LOG_LIST = "CLEAR_LOG_LIST";
 
@@ -42,5 +42,9 @@ public class AptivatorActions {
     public static final String QUIT = "QUIT";
 
     public static final String ABOUT = "ABOUT";
+
+    private AptivatorActions() {
+        // Intentional
+    }
 
 }

@@ -20,7 +20,7 @@ import com.apple.eawt.Application;
 
 import java.awt.event.ActionListener;
 
-public class AptivatorMacAccessor {
+public final class AptivatorMacAccessor {
 
     private AptivatorMacAccessor() {
         // Intentional
@@ -32,11 +32,11 @@ public class AptivatorMacAccessor {
     }
 
     public static void setMacSystemProperties() {
-        System.setProperty("apple.laf.useScreenMenuBar", "true");
+        System.setProperty("apple.laf.useScreenMenuBar", Boolean.TRUE.toString());
         System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Aptivator");
-        System.setProperty("apple.awt.antialiasing", "true");
-        System.setProperty("apple.awt.textantialiasing", "true");
-        System.setProperty("apple.awt.graphics.UseQuartz", "true");
+        System.setProperty("apple.awt.antialiasing", Boolean.TRUE.toString());
+        System.setProperty("apple.awt.textantialiasing", Boolean.TRUE.toString());
+        System.setProperty("apple.awt.graphics.UseQuartz", Boolean.TRUE.toString());
         System.setProperty("apple.awt.rendering", "speed");
     }
 }

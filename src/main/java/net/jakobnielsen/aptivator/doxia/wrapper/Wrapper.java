@@ -24,9 +24,9 @@ import java.io.OutputStream;
  */
 public interface Wrapper {
 
-    public abstract OutputStream getOutputStream();
+    OutputStream getOutputStream();
 
-    public abstract String getEncoding();
+    String getEncoding();
 
-    public abstract String getFormat();
+    String getFormat();
 }

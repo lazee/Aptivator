@@ -8,7 +8,7 @@ import java.io.UnsupportedEncodingException;
  *
  * Original author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
  */
-public class InputFileWrapper extends AbstractFileWrapper {
+public final class InputFileWrapper extends AbstractFileWrapper {
 
     /**
      * Private constructor. a

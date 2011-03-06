@@ -105,8 +105,6 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
 
     private ResourceBundle rb;
 
-    private PlexusContainer plexus;
-
     private Timer refreshTimer;
 
     public Aptivator() {
@@ -121,14 +119,16 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
     }
 
     public void setArgs(String[] args) {
-        this.args = args;
+        this.args = args.clone();
     }
 
     public void run() {
+        PlexusContainer plexus = null;
         try {
             plexus = PlexusHelper.startPlexusContainer();
         } catch (PlexusContainerException e) {
-            log.fatal("Could not load Plexus Container");
+            log.fatal("Could not load Plexus Container. Exiting application.");
+            System.exit(0);
         }
         loadSettings();
         configureUI();
@@ -239,10 +239,10 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
         } else if (CLEAR_LOG_LIST.equals(e.getActionCommand())) {
             logListModel.clear();
         } else if (OPEN_FILE.equals(e.getActionCommand())) {
-            JFileChooser fileChooser = getFileChooser();
-            fileChooser.showOpenDialog(new JFrame());
-            if (fileChooser.getSelectedFile() != null) {
-                loadDocument(fileChooser.getSelectedFile());
+            JFileChooser afileChooser = getFileChooser();
+            afileChooser.showOpenDialog(new JFrame());
+            if (afileChooser.getSelectedFile() != null) {
+                loadDocument(afileChooser.getSelectedFile());
             }
         } else if (DO_OPEN_FILE.equals(e.getActionCommand())) {
             loadDocument((File) e.getSource());
@@ -496,14 +496,14 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
 
     private void exportDocument() {
 
-        JFileChooser fileChooser = new AptivatorExportChooser();
-        fileChooser.setDialogTitle(rb.getString("menu.export.to.pdf"));
-        fileChooser.setCurrentDirectory(activeExportDir);
+        JFileChooser exportChooser = new AptivatorExportChooser();
+        exportChooser.setDialogTitle(rb.getString("menu.export.to.pdf"));
+        exportChooser.setCurrentDirectory(activeExportDir);
 
-        fileChooser.showSaveDialog(new JFrame());
-        if (fileChooser.getSelectedFile() != null) {
-            String f = fileChooser.getSelectedFile().getAbsolutePath();
-            if (f.indexOf(".") == -1) {
+        exportChooser.showSaveDialog(new JFrame());
+        if (exportChooser.getSelectedFile() != null) {
+            String f = exportChooser.getSelectedFile().getAbsolutePath();
+            if (f.indexOf('.') == -1) {
                 f += ".pdf";
             }
             File file = new File(f);
@@ -527,7 +527,7 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
             }
 
             if (proceed) {
-                activeExportDir = fileChooser.getCurrentDirectory();
+                activeExportDir = exportChooser.getCurrentDirectory();
                 if (aptivatorDocument.storeAsPdf(file)) {
                     log.info(rb.getString("info.pdf.stored.in") + file.getAbsolutePath());
                 } else {
@@ -553,7 +553,7 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
 
     class PopupListener extends MouseAdapter {
 
-        JPopupMenu popup;
+        private JPopupMenu popup;
 
         PopupListener(JPopupMenu popupMenu) {
             popup = popupMenu;

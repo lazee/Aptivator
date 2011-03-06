@@ -13,23 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.jakobnielsen.aptivator.dialog;
 
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
+package net.jakobnielsen.aptivator;
 
-/**
- * Error box
- *
- * @author <a href="mailto:jakobnielsen@gmail.com">Jakob Vad Nielsen</a>
- */
-public final class ErrorBox {
+public final class MessagesProperties {
 
-    private ErrorBox() {
+    public static final String ERROR = "error";
+    
+    private MessagesProperties() {
         // Intentional
     }
-    public static void show(String message, String title) {
-        JOptionPane.showMessageDialog(new JFrame(), message, title,
-                JOptionPane.ERROR_MESSAGE);
-    }
+
 }
