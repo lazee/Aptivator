@@ -31,6 +31,9 @@ import net.jakobnielsen.aptivator.settings.entities.StyleSheet;
 import net.jakobnielsen.aptivator.settings.entities.Stylesheets;
 import org.apache.log4j.Logger;
 import org.codehaus.plexus.PlexusContainer;
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
+import org.fife.ui.rtextarea.RTextScrollPane;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 import org.xhtmlrenderer.simple.XHTMLPanel;
 import org.xhtmlrenderer.swing.BasicPanel;
@@ -89,13 +92,20 @@ public class AptivatorDocument {
 
     private SettingsDaoProperties settingsDao;
 
+    private RSyntaxTextArea editor;
+
+    private RTextScrollPane editorPane;
+
     public AptivatorDocument(PlexusContainer plexus, ResourceBundle rb, SettingsDaoProperties settingsDao) {
         this.settingsDao = settingsDao;
         this.plexus = plexus;
         this.rb = rb;
         this.styler = new Styler();
         defaultStylesheet = new StyleSheet();
-        defaultStylesheet.setTitle(this.rb.getString("menu.default.stylesheet"));
+        defaultStylesheet.setTitle(this.rb.getString(MessagesProperties.MENU_DEFAULT_STYLESHEET));
+        editor = new RSyntaxTextArea();
+        editor.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_NONE);
+        editorPane = new RTextScrollPane(editor);
     }
 
     protected void setFile(File file) {
@@ -105,7 +115,14 @@ public class AptivatorDocument {
     public boolean hasFile() {
         return file != null;
     }
-    
+
+    public File getFileParent() {
+        if (hasFile()) {
+            return file.getParentFile();
+        }
+        return null;
+    }
+
     public void setStylesheets(Stylesheets stylesheets) {
         stylesheetsModel.removeAllElements();
         stylesheetsModel.addElement(defaultStylesheet);
@@ -135,51 +152,60 @@ public class AptivatorDocument {
             public void linkClicked(BasicPanel panel, String uri) {
                 if (uri.startsWith("http://")) {
                     if (!DesktopUtil.openUrl(uri)) {
-                        ErrorBox.show(rb.getString("error.url.external.browser"), MessagesProperties.ERROR);
+                        ErrorBox.show(rb.getString(MessagesProperties.ERROR_URL_EXTERNAL_BROWSER),
+                                MessagesProperties.ERROR);
                     }
                 } else if (uri.startsWith("mailto:")) {
                     if (!DesktopUtil.openMail(uri)) {
-                        ErrorBox.show(rb.getString("error.open.mail"), MessagesProperties.ERROR);
+                        ErrorBox.show(rb.getString(MessagesProperties.ERROR_OPEN_MAIL), MessagesProperties.ERROR);
                     }
                 } else {
-                    InfoBox.show(rb.getString("error.internal.links") + ": " + uri, MessagesProperties.ERROR);
+                    InfoBox.show(rb.getString(MessagesProperties.ERROR_INTERNAL_LINKS) + ": " + uri,
+                            MessagesProperties.ERROR);
                 }
             }
         });
 
     }
 
-    private XHTMLPanel getXHTMLPanel() {
-        return xHTMLPanel;
-    }
-
     public JComponent buildContentPane(ActionListener listener) {
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.add(buildToolbar(listener), BorderLayout.PAGE_START);
-        panel.add(buildMainPanel(), BorderLayout.CENTER);
-        return panel;
+
+        JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.BOTTOM);
+
+        /* View panel */
+        JPanel viewPanel = new JPanel(new BorderLayout());
+        viewPanel.add(buildViewToolbar(listener), BorderLayout.PAGE_START);
+        viewPanel.add(buildViewPanel(), BorderLayout.CENTER);
+        tabbedPane.addTab("View", null, viewPanel, "View file");
+
+        /* Editor panel */
+        //tabbedPane.addTab("Edit", null, editorPane, "Edit file");
+        return tabbedPane;
     }
 
-    private JComponent buildToolbar(ActionListener listener) {
+    private JComponent buildViewToolbar(ActionListener listener) {
         JToolBar toolBar = new JToolBar("");
         toolBar.setFloatable(false);
         toolBar.setRollover(true);
 
         JButton refreshButton =
-                makeButton(AptivatorUtil.REFRESH_ICON, AptivatorActions.REFRESH, rb.getString("menu.reload"),
-                        rb.getString("menu.reload"), true);
+                makeButton(AptivatorUtil.REFRESH_ICON, AptivatorActions.REFRESH, rb.getString(
+                        MessagesProperties.MENU_RELOAD),
+                        rb.getString(MessagesProperties.MENU_RELOAD), true);
         refreshButton.addActionListener(listener);
         toolBar.add(refreshButton);
 
         JButton exportButton =
-                makeButton(AptivatorUtil.EXPORT_ICON, AptivatorActions.EXPORT, rb.getString("menu.export.to.pdf"),
-                        rb.getString("menu.export.to.pdf"), true);
+                makeButton(AptivatorUtil.EXPORT_ICON, AptivatorActions.EXPORT, rb.getString(
+                        MessagesProperties.MENU_EXPORT_TO_PDF),
+                        rb.getString(MessagesProperties.MENU_EXPORT_TO_PDF), true);
         exportButton.addActionListener(listener);
         toolBar.add(exportButton);
 
         JButton browseButton =
-                makeButton(AptivatorUtil.BROWSER_ICON, AptivatorActions.VIEW_BROWSER, rb.getString("menu.view.browser"),
-                        rb.getString("menu.view.browser"),
+                makeButton(AptivatorUtil.BROWSER_ICON, AptivatorActions.VIEW_BROWSER, rb.getString(
+                        MessagesProperties.MENU_VIEW_BROWSER),
+                        rb.getString(MessagesProperties.MENU_VIEW_BROWSER),
                         true);
         browseButton.addActionListener(listener);
         toolBar.add(browseButton);
@@ -230,9 +256,9 @@ public class AptivatorDocument {
         return button;
     }
 
-    private JComponent buildMainPanel() {
+    private JComponent buildViewPanel() {
         try {
-            return new AptivatorScrollPane(getXHTMLPanel());
+            return new AptivatorScrollPane(xHTMLPanel);
         } catch (Exception ex) {
             return null;
         }
@@ -250,10 +276,11 @@ public class AptivatorDocument {
             throws UnsupportedEncodingException, FileNotFoundException, UnsupportedFormatException, ConverterException {
 
         if (f == null) {
-            ErrorBox.show(rb.getString("error.file.null"), rb.getString(MessagesProperties.ERROR));
+            ErrorBox.show(rb.getString(MessagesProperties.ERROR_FILE_NULL), rb.getString(MessagesProperties.ERROR));
             return false;
         } else if (!f.exists()) {
-            ErrorBox.show(rb.getString("error.file.missing") + ": " + f.getAbsolutePath(), MessagesProperties.ERROR);
+            ErrorBox.show(rb.getString(MessagesProperties.ERROR_FILE_MISSING) + ": " + f.getAbsolutePath(),
+                    MessagesProperties.ERROR);
         }
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -274,7 +301,7 @@ public class AptivatorDocument {
             }
             if (bais != null) {
                 try {
-                    getXHTMLPanel().setDocument(bais, "");
+                    xHTMLPanel.setDocument(bais, "");
                 } catch (Exception ex) {
                     log.error(ex);
                 }
@@ -285,6 +312,12 @@ public class AptivatorDocument {
             log.error("Write error");
         }
 
+        /* Editor */
+        try {
+            editor.setText(AptivatorUtil.readFileAsString(f));
+        } catch (IOException e) {
+            log.error("Could not add file content to editor");
+        }
         return true;
     }
 
@@ -307,7 +340,7 @@ public class AptivatorDocument {
     public boolean storeAsPdf(File outputFile) {
 
         if (outputFile == null) {
-            ErrorBox.show(rb.getString("error.file.null"), MessagesProperties.ERROR);
+            ErrorBox.show(rb.getString(MessagesProperties.ERROR_FILE_NULL), MessagesProperties.ERROR);
             return false;
         }
         OutputStream os = null;
@@ -337,7 +370,7 @@ public class AptivatorDocument {
 
     public boolean viewInBrowser() throws ConverterException {
         if (file == null || !file.exists()) {
-            ErrorBox.show(rb.getString("error.file.null"), MessagesProperties.ERROR);
+            ErrorBox.show(rb.getString(MessagesProperties.ERROR_FILE_NULL), MessagesProperties.ERROR);
             return false;
         }
         try {

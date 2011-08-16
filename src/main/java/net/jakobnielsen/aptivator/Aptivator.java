@@ -35,8 +35,27 @@ import org.apache.log4j.WriterAppender;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.PlexusContainerException;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JList;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
+import javax.swing.TransferHandler;
+import javax.swing.UIManager;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -91,9 +110,7 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
 
     private JMenu recentMenu;
 
-    private JPanel contentPanel;
-
-    private JMenu documentMenu;
+    private JComponent contentPanel;
 
     private boolean firstDocument = true;
 
@@ -178,7 +195,7 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
         /* Content contentPanel */
         contentPanel = new JPanel(new BorderLayout());
 
-        /* Log panel */
+        /* Log list */
         JList logList = buildLogMonitorList();
 
 
@@ -240,6 +257,9 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
             logListModel.clear();
         } else if (OPEN_FILE.equals(e.getActionCommand())) {
             JFileChooser afileChooser = getFileChooser();
+            if (aptivatorDocument != null && aptivatorDocument.hasFile()) {
+                afileChooser.setCurrentDirectory(aptivatorDocument.getFileParent());
+            }
             afileChooser.showOpenDialog(new JFrame());
             if (afileChooser.getSelectedFile() != null) {
                 loadDocument(afileChooser.getSelectedFile());
@@ -321,20 +341,37 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
         JMenuItem item = SwingTools.createMenuItem(this, rb.getString("menu.open.file"), OPEN_FILE);
         item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O,
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
-        fileMenu.add(item, 0);
+        fileMenu.add(item);
 
         /* Open recent */
         createRecentMenu();
-        fileMenu.add(recentMenu, 1);
+        fileMenu.add(recentMenu);
 
+        /* Reload */
+        item = SwingTools.createMenuItem(this, rb.getString("menu.reload"), REFRESH);
+        item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R,
+                Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
+        item.setEnabled(false);
+        fileMenu.add(item);
+
+
+        /* Export to PDF */
+        item = SwingTools.createMenuItem(this, rb.getString("menu.export.to.pdf"), EXPORT);
+        item.setEnabled(false);
+        fileMenu.add(item);
+
+        /* View in browser */
+        item = SwingTools.createMenuItem(this, rb.getString("menu.view.browser"), VIEW_BROWSER);
+        item.setEnabled(false);
+        fileMenu.add(item);
 
         /* Settings */
         item = SwingTools.createMenuItem(this, rb.getString("menu.settings"), SETTINGS);
 
-        item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
+        item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P,
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
 
-        fileMenu.add(item, 2);
+        fileMenu.add(item);
 
         /* Separator */
         fileMenu.addSeparator();
@@ -343,29 +380,9 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
         item = SwingTools.createMenuItem(this, rb.getString("menu.quit"), QUIT);
         item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q,
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
-        fileMenu.add(item, 4);
+        fileMenu.add(item);
 
         menuBar.add(fileMenu);
-
-        /* Document */
-        documentMenu = new JMenu(rb.getString("menu.document"));
-        documentMenu.setEnabled(false);
-
-        /* Reload */
-        item = SwingTools.createMenuItem(this, rb.getString("menu.reload"), REFRESH);
-        item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R,
-                Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
-        documentMenu.add(item);
-
-        /* Export to PDF */
-        item = SwingTools.createMenuItem(this, rb.getString("menu.export.to.pdf"), EXPORT);
-        documentMenu.add(item);
-        menuBar.add(documentMenu);
-
-        /* View in browser */
-        item = SwingTools.createMenuItem(this, rb.getString("menu.view.browser"), VIEW_BROWSER);
-        documentMenu.add(item);
-
 
         /* Help */
         JMenu menu = new JMenu(rb.getString("menu.help"));
@@ -462,7 +479,9 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
 
         if (firstDocument) {
             firstDocument = false;
-            documentMenu.setEnabled(true);
+            fileMenu.getItem(2).setEnabled(true);
+            fileMenu.getItem(3).setEnabled(true);
+            fileMenu.getItem(4).setEnabled(true);
             contentPanel.add(aptivatorDocument.buildContentPane(this), BorderLayout.CENTER);
             aptivatorDocument.setStylesheets(settings.getStylesheets());
         }

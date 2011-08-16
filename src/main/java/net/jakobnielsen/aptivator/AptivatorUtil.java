@@ -18,6 +18,9 @@ package net.jakobnielsen.aptivator;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -97,5 +100,21 @@ public final class AptivatorUtil {
         return osName.startsWith("Mac OS X");
     }
 
+    public static String readFileAsString(File file) throws java.io.IOException {
+        byte[] buffer = new byte[(int) file.length()];
+        BufferedInputStream f = null;
+        try {
+            f = new BufferedInputStream(new FileInputStream(file));
+            f.read(buffer);
+        } finally {
+            if (f != null) {
+                try {
+                    f.close();
+                } catch (IOException ignored) {
+                }
+            }
+        }
+        return new String(buffer);
+    }
 
 }

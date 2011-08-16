@@ -19,6 +19,7 @@ package net.jakobnielsen.aptivator.settings;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+import net.jakobnielsen.aptivator.MessagesProperties;
 import net.jakobnielsen.aptivator.dialog.AptivatorFileChooser;
 import net.jakobnielsen.aptivator.dialog.ErrorBox;
 import net.jakobnielsen.aptivator.settings.entities.StyleSheet;
@@ -60,13 +61,13 @@ public class StylesheetDialog extends JDialog {
     private ResourceBundle rb;
 
     public StylesheetDialog(Frame owner, StyleSheet styleSheet, ResourceBundle rb) {
-        super(owner, rb.getString("text.stylesheet"), true);
+        super(owner, rb.getString(MessagesProperties.TEXT_STYLESHEET), true);
 
         this.rb = rb;
         this.styleSheet = styleSheet;
 
-        okButton = new JButton(rb.getString("text.ok"));
-        cancelButton = new JButton(rb.getString("text.cancel"));
+        okButton = new JButton(rb.getString(MessagesProperties.TEXT_OK));
+        cancelButton = new JButton(rb.getString(MessagesProperties.TEXT_CANCEL));
         
         JPanel mainPanel = buildMainPanel();
 
@@ -125,7 +126,7 @@ public class StylesheetDialog extends JDialog {
         if (titleField != null && !"".equals(titleField.getText().trim())) {
             return true;
         }
-        ErrorBox.show(rb.getString("error.stylesheet.title"), rb.getString("error"));
+        ErrorBox.show(rb.getString(MessagesProperties.ERROR_STYLESHEET_TITLE), rb.getString(MessagesProperties.ERROR));
         return false;
     }
 
@@ -135,10 +136,10 @@ public class StylesheetDialog extends JDialog {
             if (f.exists()) {
                 return true;
             }
-            ErrorBox.show(rb.getString("error.file.missing"),  rb.getString("error"));
+            ErrorBox.show(rb.getString(MessagesProperties.ERROR_FILE_MISSING),  rb.getString(MessagesProperties.ERROR));
             return false;
         }
-        ErrorBox.show(rb.getString("error.stylesheet.path"), rb.getString("error"));
+        ErrorBox.show(rb.getString(MessagesProperties.ERROR_STYLESHEET_PATH), rb.getString(MessagesProperties.ERROR));
         return false;
     }
 

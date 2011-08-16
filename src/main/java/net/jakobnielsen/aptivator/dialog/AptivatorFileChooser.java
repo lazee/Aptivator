@@ -26,4 +26,5 @@ public class AptivatorFileChooser extends JFileChooser {
         super.addChoosableFileFilter(new AptivatorFileFilter(extension));
         super.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
     }
+
 }

@@ -39,8 +39,10 @@ Development
 
  Aptivator is a java client that is build with Maven ({{http://maven.apache.org}}).
 
- All dependencies are in the standard Maven repositories, except from the Flying Saucer XHTML Renderer package.
- So you will need to download this manually and install it into your local Maven repository.
+ All dependencies are in the standard Maven repositories, except from the Flying Saucer XHTML Renderer package and the
+ rSynraxtTextArea (They will soon be added to the maven2.jakobnielsen.net repository).
+
+ So you will need to download them manually and install it into your local Maven repository.
 
  Download the package from here: {{http://code.google.com/p/flying-saucer/downloads/detail?name=flyingsaucer-R8.zip}}
 
@@ -49,9 +51,21 @@ Development
 +----------+
 > unzip flyingsaucer-R8-src.zip
 > cd flyingsaucer-R8-src
->  mvn install:install-file -DgroupId=net.java.dev.xhtmlrenderer -DartifactId=core-renderer -Dversion=8.0-PRE2 \
-      -Dpackaging=jar -Dfile=core-renderer.jar -DrepositoryId=api-repository -DgeneratePom=true
+>  mvn install:install-file -DgroupId=net.java.dev.xhtmlrenderer -DartifactId=core-renderer -Dversion=8.0.0 \
+      -Dpackaging=jar -Dfile=core-renderer.jar -DgeneratePom=true
 +----------+
+
+ Then download : {{http://sourceforge.net/projects/rsyntaxtextarea/files/rsyntaxtextarea/1.5.0/rsyntaxtextarea_1.5.0.zip/download}}
+
+ Follow these steps:
+
++----------+
+> unzip rsyntaxtextarea_1.5.0.zip
+>  mvn install:install-file -DgroupId=org.fife -DartifactId=rsyntaxtextarea -Dversion=1.5.0 \
+      -Dpackaging=jar -Dfile=rsyntaxtextarea.jar -DgeneratePom=true
++----------+
+
+
 
  You should now be ready to compile Aptivator.
 

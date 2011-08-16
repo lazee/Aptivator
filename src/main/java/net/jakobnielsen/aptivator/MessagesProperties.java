@@ -19,7 +19,21 @@ package net.jakobnielsen.aptivator;
 public final class MessagesProperties {
 
     public static final String ERROR = "error";
-    
+    public static final String TEXT_STYLESHEET = "text.stylesheet";
+    public static final String TEXT_OK = "text.ok";
+    public static final String TEXT_CANCEL = "text.cancel";
+    public static final String ERROR_STYLESHEET_TITLE = "error.stylesheet.title";
+    public static final String ERROR_STYLESHEET_PATH = "error.stylesheet.path";
+    public static final String ERROR_URL_EXTERNAL_BROWSER = "error.url.external.browser";
+    public static final String ERROR_OPEN_MAIL = "error.open.mail";
+    public static final String ERROR_INTERNAL_LINKS = "error.internal.links";
+    public static final String MENU_RELOAD = "menu.reload";
+    public static final String MENU_EXPORT_TO_PDF = "menu.export.to.pdf";
+    public static final String MENU_VIEW_BROWSER = "menu.view.browser";
+    public static final String ERROR_FILE_NULL = "error.file.null";
+    public static final String ERROR_FILE_MISSING = "error.file.missing";
+    public static final String MENU_DEFAULT_STYLESHEET = "menu.default.stylesheet";
+
     private MessagesProperties() {
         // Intentional
     }
