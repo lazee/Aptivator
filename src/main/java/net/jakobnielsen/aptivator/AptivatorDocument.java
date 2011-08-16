@@ -84,6 +84,8 @@ public class AptivatorDocument {
 
     private JComboBox stylesheetCombo;
 
+    private AptivatorScrollPane viewPanel;
+
     private PlexusContainer plexus;
 
     private static Logger log = Logger.getLogger(AptivatorDocument.class);
@@ -173,10 +175,11 @@ public class AptivatorDocument {
         JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.BOTTOM);
 
         /* View panel */
-        JPanel viewPanel = new JPanel(new BorderLayout());
-        viewPanel.add(buildViewToolbar(listener), BorderLayout.PAGE_START);
-        viewPanel.add(buildViewPanel(), BorderLayout.CENTER);
-        tabbedPane.addTab("View", null, viewPanel, "View file");
+        JPanel viewTab = new JPanel(new BorderLayout());
+        viewTab.add(buildViewToolbar(listener), BorderLayout.PAGE_START);
+        viewPanel = buildViewPanel();
+        viewTab.add(viewPanel, BorderLayout.CENTER);
+        tabbedPane.addTab("View", null, viewTab, "View file");
 
         /* Editor panel */
         //tabbedPane.addTab("Edit", null, editorPane, "Edit file");
@@ -256,7 +259,7 @@ public class AptivatorDocument {
         return button;
     }
 
-    private JComponent buildViewPanel() {
+    private AptivatorScrollPane buildViewPanel() {
         try {
             return new AptivatorScrollPane(xHTMLPanel);
         } catch (Exception ex) {
@@ -267,6 +270,16 @@ public class AptivatorDocument {
     public boolean loadAptFile()
             throws UnsupportedEncodingException, FileNotFoundException, UnsupportedFormatException, ConverterException {
         return loadAptFile(file);
+    }
+
+    public boolean reloadAptFile()
+            throws UnsupportedEncodingException, FileNotFoundException, UnsupportedFormatException, ConverterException {
+        int value = viewPanel.getVerticalScrollBar().getValue();
+        boolean isOk = loadAptFile(file);
+        if (isOk) {
+            viewPanel.getVerticalScrollBar().setValue(value);
+        }
+        return isOk;
     }
 
     /*

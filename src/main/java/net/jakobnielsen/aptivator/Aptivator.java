@@ -461,7 +461,8 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
     private void reloadDocument() {
         if (aptivatorDocument != null && aptivatorDocument.hasFile()) {
             try {
-                aptivatorDocument.loadAptFile();
+
+                aptivatorDocument.reloadAptFile();
                 log.info(rb.getString("info.reload.ok"));
             } catch (UnsupportedEncodingException ex) {
                 log.error(rb.getString("error.encoding.problems"));
