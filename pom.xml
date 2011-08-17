@@ -15,7 +15,8 @@
   ~ limitations under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.jakobnielsen</groupId>
     <artifactId>aptivator</artifactId>
@@ -186,6 +187,17 @@
                 <enabled>true</enabled>
             </snapshots>
         </repository>
+        <repository>
+            <id>jakobnielsen-repository</id>
+            <name>Jakob Nielsen Repository</name>
+            <url>http://maven2.jakobnielsen.net</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -246,10 +258,9 @@
             <version>4.0.1</version>
         </dependency>
         <dependency>
-            <groupId>net.java.dev.xhtmlrenderer</groupId>
+            <groupId>org.xhtmlrenderer</groupId>
             <artifactId>core-renderer</artifactId>
-            <version>8.0.0</version>
-            <scope>compile</scope>
+            <version>R8</version>
         </dependency>
         <dependency>
             <groupId>com.jgoodies</groupId>
@@ -276,12 +287,49 @@
             <artifactId>rsyntaxtextarea</artifactId>
             <version>1.5.0</version>
         </dependency>
-
+        
     </dependencies>
 
     <properties>
         <doxiaVersion>1.1.4</doxiaVersion>
     </properties>
+
+    <profiles>
+        <profile>
+            <id>aptivator-dev-linux</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+                <os>
+                    <family>linux</family>
+                </os>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>eple</groupId>
+                    <artifactId>eple</artifactId>
+                    <version>1.0</version>
+                    <scope>provided</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>aptivator-dev-windows</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+                <os>
+                    <family>windows</family>
+                </os>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>eple</groupId>
+                    <artifactId>eple</artifactId>
+                    <version>1.0</version>
+                    <scope>provided</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
 
     <distributionManagement>
         <site>

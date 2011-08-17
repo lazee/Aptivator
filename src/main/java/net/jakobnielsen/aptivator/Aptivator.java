@@ -388,8 +388,6 @@ public class Aptivator extends TransferHandler implements ComponentListener, Act
         JMenu menu = new JMenu(rb.getString("menu.help"));
 
         item = SwingTools.createMenuItem(this, rb.getString("menu.about"), ABOUT);
-        item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A,
-                Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
         menu.add(item);
         menuBar.add(menu);
         return menuBar;
