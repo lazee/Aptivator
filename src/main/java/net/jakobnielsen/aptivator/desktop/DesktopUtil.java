@@ -79,6 +79,8 @@ public final class DesktopUtil {
         return false;
     }
 
+    /*
+    TODO Should implement print support later
     public static boolean printFile(File file) {
         if (isDesktop() && getDesktop().isSupported(Desktop.Action.PRINT)) {
             try {
@@ -90,6 +92,7 @@ public final class DesktopUtil {
         }
         return false;
     }
+    */
 
     public static boolean openMail(String mailto) {
         try {

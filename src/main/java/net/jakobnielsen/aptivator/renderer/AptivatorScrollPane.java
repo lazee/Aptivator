@@ -24,24 +24,39 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
 
 /**
- * <p><code>FSScrollPane</code> is a JScrollPane set up to support keyboard navigation of an XHTML/XML document rendered
- * with Flying Saucer. In particular, it assigns key bindings to the view's {@link javax.swing.InputMap} for page-up,
- * page-down, line-up/down, page-start and page-end. The amount the document scrolls is based on the current viewport
- * and the current line height. If the view is resized, the scroll increment is automatically adjusted. Using
- * FSScrollPane to display an {@link org.xhtmlrenderer.simple.XHTMLPanel} should save you time as your users will have
- * standard keyboard navigation out of the box.</p>
- * <p/>
- * <p>To use <code>FSScrollPane</code>, just instantiate it and add your XHTMLPanel on instantiation:
+ * <code>FSScrollPane</code> is a JScrollPane set up to support keyboard navigation of an XHTML/XML document rendered
+ * with Flying Saucer.
+ *
+ * <p>In particular, it assigns key bindings to the view's {@link javax.swing.InputMap} for page-up, page-down,
+ * line-up/down, page-start and page-end. The amount the document scrolls is based on the current viewport and the
+ * current line height. If the view is resized, the scroll increment is automatically adjusted. Using FSScrollPane to
+ * display an {@link org.xhtmlrenderer.simple.XHTMLPanel} should save you time as your users will have standard
+ * keyboard
+ * navigation out of the box.</p>
+ *
+ * <p>To use <code>FSScrollPane</code>, just instantiate it and add your XHTMLPanel on instantiation:</p>
+ *
  * <pre>
  * XHTMLPanel panel = new XHTMLPanel();
  * FSScrollPane scroll = new FSScrollPane(view);
  * </pre>
- * <p>The current input mappings to keys are: <dl> <dt>Scroll to Start<dt><dd>CONTROL-HOME or HOME</dd> <dt>Scroll Up 1
- * Page<dt><dd>PAGEUP</dd> <dt>Scroll Up 1 Line<dt><dd>UP-ARROW</dd> <dt>Scroll to Bottom<dt><dd>CONTROL-END or END</dd>
- * <dt>Scroll Down 1 Page<dt><dd>PAGEDOWN</dd> <dt>Scroll Down 1 Line<dt><dd>DOWN-ARROW</dd> </dl> This class declares
- * six constant strings you can use if you want to override one of these default settings on the <code>InputMap</code>;
- * these Strings will be trigger the relevant <code>Action</code> associated with the scrolling. To change the key
- * binding for "Scroll to Top" to <code>Alt-Home</code>, do this:
+ *
+ * <p>The current input mappings to keys are:
+ *
+ * <dl>
+ *
+ * <dt>Scroll to Start<dt><dd>CONTROL-HOME or HOME</dd> <dt>Scroll Up 1 Page<dt><dd>PAGEUP</dd>
+ *
+ * <dt>Scroll Up 1 Line<dt><dd>UP-ARROW</dd> <dt>Scroll to Bottom<dt><dd>CONTROL-END or END</dd>
+ *
+ * <dt>Scroll Down 1 Page<dt></dt><dd>PAGEDOWN</dd> <dt>Scroll Down 1 Line<dt><dd>DOWN-ARROW</dd>
+ *
+ * </dl>
+ *
+ * <p>This class declares six constant strings you can use if you want to override one of these default settings on the
+ * <code>InputMap</code>; these Strings will be trigger the relevant <code>Action</code> associated with the scrolling.
+ * To change the key binding for "Scroll to Top" to <code>Alt-Home</code>, do this:</p>
+ *
  * <pre>
  * panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).
  * put(KeyStroke.getKeyStroke(KeyEvent.VK_HOME, KeyEvent.ALT_MASK), FSScrollPane.PAGE_START);
@@ -53,22 +68,34 @@ public class AptivatorScrollPane extends JScrollPane {
 
     private static final long serialVersionUID = 2L;
 
-    /** Constant used for mapping a key binding to "scroll down 1 page" */
+    /**
+     * Constant used for mapping a key binding to "scroll down 1 page"
+     */
     public static final String PAGE_DOWN = "page-down";
 
-    /** Constant used for mapping a key binding to "scroll up 1 page" */
+    /**
+     * Constant used for mapping a key binding to "scroll up 1 page"
+     */
     public static final String PAGE_UP = "page-up";
 
-    /** Constant used for mapping a key binding to "scroll down 1 line" */
+    /**
+     * Constant used for mapping a key binding to "scroll down 1 line"
+     */
     public static final String LINE_DOWN = "down";
 
-    /** Constant used for mapping a key binding to "scroll up 1 line" */
+    /**
+     * Constant used for mapping a key binding to "scroll up 1 line"
+     */
     public static final String LINE_UP = "up";
 
-    /** Constant used for mapping a key binding to "scroll to end of document" */
+    /**
+     * Constant used for mapping a key binding to "scroll to end of document"
+     */
     public static final String PAGE_END = "page-end";
 
-    /** Constant used for mapping a key binding to "scroll to top of document" */
+    /**
+     * Constant used for mapping a key binding to "scroll to top of document"
+     */
     public static final String PAGE_START = "page-start";
 
     /* Instantiates a new FSScrollPane around the given Panel; see class documentation. */

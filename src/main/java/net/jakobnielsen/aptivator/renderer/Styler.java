@@ -52,6 +52,7 @@ public class Styler {
     private String createOutputString(String xhtml, String themeCss) {
         String s = xhtml;
         String baseCss = getCss("maven-base.css");
+        // This is really a hack, but this is the easiest way we can insert additional css in the document.
         s = s.replaceAll("<head>", "<head><style language='text/css'>" + baseCss + "</style>" +
                 "<style language='text/css'>" + themeCss + "</style>");
         return s;

@@ -36,6 +36,7 @@ public class AptivatorOpenFilesHandler implements OpenFilesHandler {
     @Override
     public void openFiles(AppEvent.OpenFilesEvent openFilesEvent) {
         List<File> fileList = openFilesEvent.getFiles();
+        // Aptivator can at the moment only open one file
         if (fileList != null && fileList.size() > 0) {
             actionListener.actionPerformed(
                     new ActionEvent(fileList.get(0), ActionEvent.ACTION_PERFORMED, AptivatorActions.OPEN_FILE));
