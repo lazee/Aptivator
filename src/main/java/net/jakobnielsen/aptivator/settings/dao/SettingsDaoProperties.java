@@ -145,7 +145,7 @@ public class SettingsDaoProperties {
     }
 
     protected String createListStr(List<File> lst) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append("{");
         boolean first = true;
         for (File f : lst) {
