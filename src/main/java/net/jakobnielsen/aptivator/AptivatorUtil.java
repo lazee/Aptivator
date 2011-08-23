@@ -59,7 +59,7 @@ public final class AptivatorUtil {
         try {
             is = AptivatorUtil.class.getResourceAsStream("/META-INF/" + name);
             if (is != null) {
-                StringBuffer out = new StringBuffer();
+                StringBuilder out = new StringBuilder();
                 byte[] b = new byte[1000];
                 int n = is.read(b);
                 while (n != -1) {
@@ -100,12 +100,13 @@ public final class AptivatorUtil {
         return osName.startsWith("Mac OS X");
     }
 
+    @SuppressWarnings({"ResultOfMethodCallIgnored"})
     public static String readFileAsString(File file) throws java.io.IOException {
         byte[] buffer = new byte[(int) file.length()];
         BufferedInputStream f = null;
         try {
             f = new BufferedInputStream(new FileInputStream(file));
-            f.read(buffer);
+            f.read(buffer); // NOSONAR
         } finally {
             if (f != null) {
                 try {
