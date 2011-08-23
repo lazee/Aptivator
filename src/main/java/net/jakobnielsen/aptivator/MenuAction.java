@@ -31,14 +31,11 @@ public class MenuAction extends AbstractAction {
 
     public MenuAction(ActionListener listener, String text, String id) {
         super(text);
-        init(listener, id, null);
+        init(listener, id);
     }
 
-    private void init(ActionListener listener, String id, Integer mnemonic) {
+    private void init(ActionListener listener, String id) {
         putValue(ACTION_COMMAND_KEY, id);
-        if (mnemonic != null) {
-            putValue(MNEMONIC_KEY, mnemonic);
-        }
         this.listener = listener;
     }
 
